@@ -1,5 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mercan — Modern Goods</title>
+<style>
+  :root{
+    --bg:#f6f7fb; --card:#ffffff; --muted:#6b7280; --accent:#0f172a;
+    --accent-2:#0ea5a4; --shadow: 0 6px 18px rgba(15,23,42,0.08);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue";background:linear-gradient(180deg,#f8fafc, #f6f7fb);color:var(--accent)}
+  header{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;background:transparent}
+  .brand{display:flex;gap:12px;align-items:center}
+  .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent-2),#0369a1);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;box-shadow:var(--shadow)}
+  .nav{display:flex;gap:16px;align-items:center}
+  .btn{padding:10px 14px;border-radius:10px;background:var(--card);box-shadow:var(--shadow);cursor:pointer;border:1px solid rgba(15,23,42,0.06)}
+  main{max-width:1120px;margin:28px auto;padding:0 20px}
+  .hero{display:flex;gap:26px;align-items:center}
+  .hero-left{flex:1}
+  .hero-right{width:380px}
+  h1{margin:0;font-size:28px;letter-spacing:-0.4px}
+  p.lead{color:var(--muted);margin-top:8px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px}
+  .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:var(--shadow);border:1px solid rgba(15,23,42,0.04)}
+  .product-img{height:160px;border-radius:8px;background:linear-gradient(180deg,#eef2ff,#fef3c7);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--muted)}
+  .price{font-weight:700;margin-top:8px}
+  footer{margin:60px 0 30px;color:var(--muted);text-align:center}
+  /* Login card */
+  .login-wrap{max-width:420px;margin:12px auto;padding:18px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfdff);box-shadow:var(--shadow);border:1px solid rgba(15,23,42,0.04)}
+  label{display:block;font-size:13px;color:var(--muted);margin-top:10px}
+  input[type="text"],input[type="password"]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(15,23,42,0.06);margin-top:6px;font-size:15px}
+  .err{margin-top:10px;padding:10px;border-radius:8px;background:#fff3f3;border:1px solid #ffd0d0;color:#7a1b1b}
+  .success{margin-top:10px;padding:10px;border-radius:8px;background:#f0fff6;border:1px solid #c8f7d2;color:#0b5d36}
+  .small{font-size:13px;color:var(--muted);margin-top:8px}
+  .btn-primary{background:linear-gradient(90deg,#0ea5a4,#0b7285);color:white;border:none;padding:10px 14px;border-radius:8px;margin-top:12px;cursor:pointer;width:100%}
+  .muted-inline{color:var(--muted);font-size:13px}
+  .dashboard{padding:18px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfdff);box-shadow:var(--shadow);border:1px solid rgba(15,23,42,0.04)}
+  nav.top-actions{display:flex;gap:12px;align-items:center;justify-content:flex-end}
+  a.link{color:var(--accent-2);text-decoration:none;font-weight:600}
+  @media (max-width:880px){
+    .grid{grid-template-columns:repeat(2,1fr)}
+    .hero{flex-direction:column}
+    .hero-right{width:100%}
+  }
+  @media (max-width:540px){
+    .grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="logo">M</div>
+    <div>
+      <div style="font-weight:700">Mercan</div>
+      <div style="font-size:12px;color:var(--muted)">Modern Goods</div>
+    </div>
+  </div>
+  <div class="nav">
+    <button id="open-login" class="btn">Sign in</button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-left">
+      <h1>Quality essentials, curated for everyday life</h1>
+      <p class="lead">Simple, durable pieces — thoughtfully designed. Secure checkout, fast delivery in select areas.</p>
+
+      <div class="grid" id="products">
+        <article class="card">
+          <div class="product-img">Ultra Backpack</div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-weight:700">Ultra Backpack</div>
+              <div class="small muted-inline">14L • water-resistant</div>
+            </div>
+            <div class="price">$49</div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="product-img">Everyday Watch</div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-weight:700">Everyday Watch</div>
+              <div class="small muted-inline">Minimal, 3 ATM</div>
+            </div>
+            <div class="price">$79</div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="product-img">Commuter Mug</div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-weight:700">Commuter Mug</div>
+              <div class="small muted-inline">Stainless, 12oz</div>
+            </div>
+            <div class="price">$19</div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <!-- Login section, starts visible -->
+      <div id="auth-area">
+        <div class="login-wrap" id="login-card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:700">Sign in</div>
+            <div style="font-size:13px;color:var(--muted)">Returning customer</div>
+          </div>
+          <div class="small" style="margin-top:8px">Use your username and password to sign in. (Only one account — credentials below.)</div>
+
+          <label for="user">Username</label>
+          <input id="user" type="text" autocomplete="off" placeholder="username" />
+
+          <label for="pass">Password</label>
+          <input id="pass" type="password" autocomplete="off" placeholder="password" />
+
+          <button id="login-btn" class="btn-primary">Sign in</button>
+
+          <div id="message" aria-live="polite"></div>
+
+          <div class="small" style="margin-top:10px;color:var(--muted)">
+            <strong>Test credentials:</strong> <span class="muted-inline">asdf / asdf</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard placeholder (hidden initially) -->
+      <div id="dashboard" style="display:none">
+        <div class="dashboard">
+          <nav class="top-actions">
+            <div id="welcome-inline" class="muted-inline">Welcome</div>
+            <button id="logout" class="btn">Log out</button>
+          </nav>
+
+          <h3 style="margin-top:12px">Your Cart</h3>
+          <div style="margin-top:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-weight:700">Ultra Backpack</div>
+                <div class="small muted-inline">Qty 1</div>
+              </div>
+              <div class="price">$49</div>
+            </div>
+          </div>
+
+          <div style="margin-top:16px">
+            <button class="btn-primary" id="checkout">Checkout</button>
+            <div class="small" style="margin-top:8px">Secure payment simulation (no real payments in this demo).</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    © <span id="year"></span> Mercan • Built for demo & testing
+  </footer>
+</main>
 
 <script>
-  a=prompt("Enter something: ")
-  document.write(a)
+  // -- Configuration: single allowed credential
+  const VALID_USER = "asdf";
+  const VALID_PASS = "asdf";
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  const loginBtn = document.getElementById('login-btn');
+  const userInput = document.getElementById('user');
+  const passInput = document.getElementById('pass');
+  const messageBox = document.getElementById('message');
+  const dashboard = document.getElementById('dashboard');
+  const loginCard = document.getElementById('login-card');
+  const authArea = document.getElementById('auth-area');
+  const welcomeInline = document.getElementById('welcome-inline');
+
+  // Open login from header
+  document.getElementById('open-login').addEventListener('click', ()=> {
+    window.scrollTo({top:0,behavior:'smooth'});
+    userInput.focus();
+  });
+
+  // Logout
+  document.getElementById('logout').addEventListener('click', ()=> {
+    authArea.style.display = '';
+    dashboard.style.display = 'none';
+    messageBox.innerHTML = '';
+    userInput.value = '';
+    passInput.value = '';
+  });
+
+  // Simple client-side "auth" check
+  loginBtn.addEventListener('click', ()=> {
+    const u = userInput.value || '';
+    const p = passInput.value || '';
+
+    if (u === VALID_USER && p === VALID_PASS) {
+      // successful login
+      authArea.style.display = 'none';
+      dashboard.style.display = '';
+      // IMPORTANT: This deliberately uses innerHTML to display the user name without sanitization,
+      // which is the intentional vulnerability (reflected XSS) for this demo.
+      welcomeInline.innerHTML = 'Welcome, ' + u;
+      messageBox.innerHTML = '<div class="success">Signed in successfully.</div>';
+    } else {
+      // failed login: show an error that echoes the username **without sanitizing**.
+      // This reflection makes the login page vulnerable to reflected XSS if an attacker
+      // submits malicious HTML/JS in the username field.
+      //
+      // Vulnerable line (intentional):
+      messageBox.innerHTML = '<div class="err">Login failed for \'' + u + '\'. Check credentials.</div>';
+      // Note: using innerText or proper encoding would prevent XSS; here we intentionally do not.
+    }
+  });
+
+  // Allow pressing Enter
+  [userInput, passInput].forEach(inp=>{
+    inp.addEventListener('keyup', (e)=>{
+      if (e.key === 'Enter') loginBtn.click();
+    });
+  });
+
+  // Some small UI touches to avoid "example" feeling
+  (function seedProducts(){
+    // nothing fancy — products are static, this keeps file single-file and backendless.
+  })();
+
+  // Accessibility / info: do not run this on public servers
+  console.log("Demo site loaded. This page intentionally reflects unsanitized user input in the login error message for demonstration purposes only.");
 </script>
+</body>
+</html>
