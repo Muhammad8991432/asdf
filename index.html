@@ -3,50 +3,61 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Mercan — Modern Goods</title>
+<title>Mercan — Home Goods & Lifestyle</title>
 <style>
   :root{
-    --bg:#f6f7fb; --card:#ffffff; --muted:#6b7280; --accent:#0f172a;
-    --accent-2:#0ea5a4; --shadow: 0 6px 18px rgba(15,23,42,0.08);
+    --bg:#f4f6f8; --card:#fff; --muted:#6b7280; --text:#0f172a;
+    --accent:#0ea5a4; --accent-2:#0369a1; --glass: rgba(255,255,255,0.6);
+    --shadow: 0 8px 24px rgba(15,23,42,0.08);
   }
   *{box-sizing:border-box}
-  body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue";background:linear-gradient(180deg,#f8fafc, #f6f7fb);color:var(--accent)}
-  header{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;background:transparent}
-  .brand{display:flex;gap:12px;align-items:center}
-  .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent-2),#0369a1);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;box-shadow:var(--shadow)}
-  .nav{display:flex;gap:16px;align-items:center}
-  .btn{padding:10px 14px;border-radius:10px;background:var(--card);box-shadow:var(--shadow);cursor:pointer;border:1px solid rgba(15,23,42,0.06)}
-  main{max-width:1120px;margin:28px auto;padding:0 20px}
-  .hero{display:flex;gap:26px;align-items:center}
+  html,body{height:100%}
+  body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial;color:var(--text);background:linear-gradient(180deg,#eef2ff, var(--bg));-webkit-font-smoothing:antialiased}
+  header{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;background:transparent;position:sticky;top:0}
+  .brand{display:flex;gap:14px;align-items:center}
+  .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;box-shadow:var(--shadow)}
+  .nav{display:flex;gap:12px;align-items:center}
+  .btn{padding:9px 12px;border-radius:10px;background:var(--card);box-shadow:var(--shadow);cursor:pointer;border:1px solid rgba(15,23,42,0.05);font-weight:600}
+  .btn-ghost{background:transparent;border:1px solid rgba(15,23,42,0.06)}
+  main{max-width:1180px;margin:22px auto;padding:18px}
+  .hero{display:flex;gap:26px;align-items:flex-start}
   .hero-left{flex:1}
-  .hero-right{width:380px}
-  h1{margin:0;font-size:28px;letter-spacing:-0.4px}
+  .hero-right{width:420px}
+  h1{margin:0;font-size:30px}
   p.lead{color:var(--muted);margin-top:8px}
+  .search-bar{margin-top:16px;display:flex;gap:8px}
+  input.search{flex:1;padding:12px;border-radius:12px;border:1px solid rgba(15,23,42,0.06);font-size:15px}
   .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px}
-  .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:var(--shadow);border:1px solid rgba(15,23,42,0.04)}
-  .product-img{height:160px;border-radius:8px;background:linear-gradient(180deg,#eef2ff,#fef3c7);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--muted)}
-  .price{font-weight:700;margin-top:8px}
+  .card{background:var(--card);padding:14px;border-radius:14px;box-shadow:var(--shadow);border:1px solid rgba(15,23,42,0.04)}
+  .product-img{height:160px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfdff);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--muted);font-size:14px}
+  .price{font-weight:800;margin-top:8px}
   footer{margin:60px 0 30px;color:var(--muted);text-align:center}
-  /* Login card */
-  .login-wrap{max-width:420px;margin:12px auto;padding:18px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfdff);box-shadow:var(--shadow);border:1px solid rgba(15,23,42,0.04)}
+
+  /* Right column: auth / profile */
+  .panel{background:linear-gradient(180deg,#ffffff,var(--glass));padding:16px;border-radius:12px;box-shadow:var(--shadow);border:1px solid rgba(15,23,42,0.04)}
   label{display:block;font-size:13px;color:var(--muted);margin-top:10px}
   input[type="text"],input[type="password"]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(15,23,42,0.06);margin-top:6px;font-size:15px}
   .err{margin-top:10px;padding:10px;border-radius:8px;background:#fff3f3;border:1px solid #ffd0d0;color:#7a1b1b}
   .success{margin-top:10px;padding:10px;border-radius:8px;background:#f0fff6;border:1px solid #c8f7d2;color:#0b5d36}
-  .small{font-size:13px;color:var(--muted);margin-top:8px}
-  .btn-primary{background:linear-gradient(90deg,#0ea5a4,#0b7285);color:white;border:none;padding:10px 14px;border-radius:8px;margin-top:12px;cursor:pointer;width:100%}
   .muted-inline{color:var(--muted);font-size:13px}
-  .dashboard{padding:18px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfdff);box-shadow:var(--shadow);border:1px solid rgba(15,23,42,0.04)}
-  nav.top-actions{display:flex;gap:12px;align-items:center;justify-content:flex-end}
-  a.link{color:var(--accent-2);text-decoration:none;font-weight:600}
-  @media (max-width:880px){
+
+  /* small responsive tweaks */
+  @media (max-width:980px){
     .grid{grid-template-columns:repeat(2,1fr)}
     .hero{flex-direction:column}
     .hero-right{width:100%}
   }
-  @media (max-width:540px){
+  @media (max-width:560px){
     .grid{grid-template-columns:1fr}
   }
+
+  /* little helpers */
+  .top-row{display:flex;justify-content:space-between;align-items:center}
+  .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(14,165,164,0.12);color:var(--accent);font-weight:700}
+  nav.top-actions{display:flex;gap:12px;align-items:center;justify-content:flex-end}
+  .cart-count{background:#0b7285;color:#fff;padding:6px 8px;border-radius:8px;font-size:13px}
+  .muted-note{font-size:13px;color:var(--muted);margin-top:8px}
+
 </style>
 </head>
 <body>
@@ -54,106 +65,85 @@
   <div class="brand">
     <div class="logo">M</div>
     <div>
-      <div style="font-weight:700">Mercan</div>
-      <div style="font-size:12px;color:var(--muted)">Modern Goods</div>
+      <div style="font-weight:800">Mercan</div>
+      <div style="font-size:13px;color:var(--muted)">Home goods & lifestyle</div>
     </div>
   </div>
   <div class="nav">
-    <button id="open-login" class="btn">Sign in</button>
+    <button id="btn-profile" class="btn btn-ghost">Profile</button>
+    <button id="btn-cart" class="btn">Cart <span id="count" class="cart-count" style="margin-left:8px">0</span></button>
   </div>
 </header>
 
 <main>
   <section class="hero">
     <div class="hero-left">
-      <h1>Quality essentials, curated for everyday life</h1>
-      <p class="lead">Simple, durable pieces — thoughtfully designed. Secure checkout, fast delivery in select areas.</p>
+      <h1>Thoughtful everyday essentials, ready to ship</h1>
+      <p class="lead">Quality materials, clean design, small-batch curation. Browse curated picks below or search to find something specific.</p>
+
+      <div class="search-bar">
+        <input id="search" class="search" placeholder="Search products, e.g. " />
+        <button id="do-search" class="btn">Search</button>
+      </div>
 
       <div class="grid" id="products">
-        <article class="card">
-          <div class="product-img">Ultra Backpack</div>
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <div style="font-weight:700">Ultra Backpack</div>
-              <div class="small muted-inline">14L • water-resistant</div>
-            </div>
-            <div class="price">$49</div>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="product-img">Everyday Watch</div>
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <div style="font-weight:700">Everyday Watch</div>
-              <div class="small muted-inline">Minimal, 3 ATM</div>
-            </div>
-            <div class="price">$79</div>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="product-img">Commuter Mug</div>
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <div style="font-weight:700">Commuter Mug</div>
-              <div class="small muted-inline">Stainless, 12oz</div>
-            </div>
-            <div class="price">$19</div>
-          </div>
-        </article>
+        <!-- products injected by JS -->
       </div>
     </div>
 
     <div class="hero-right">
-      <!-- Login section, starts visible -->
-      <div id="auth-area">
-        <div class="login-wrap" id="login-card">
+      <!-- Auth / Profile panel -->
+      <div id="panel-area" class="panel">
+        <!-- login form shown when not signed in -->
+        <div id="login-view">
           <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="font-weight:700">Sign in</div>
-            <div style="font-size:13px;color:var(--muted)">Returning customer</div>
+            <div style="font-weight:800">Sign in</div>
+            <div style="font-size:13px;color:var(--muted)">Secure for demo</div>
           </div>
-          <div class="small" style="margin-top:8px">Use your username and password to sign in. (Only one account — credentials below.)</div>
 
-          <label for="user">Username</label>
-          <input id="user" type="text" autocomplete="off" placeholder="username" />
+          <div class="muted-note">Tip: any username will authenticate on this demo. This intentionally accepts any username (and any password) to let you try different inputs. The welcome message intentionally reflects your username without sanitization for testing XSS in a safe lab.</div>
 
-          <label for="pass">Password</label>
-          <input id="pass" type="password" autocomplete="off" placeholder="password" />
+          <label for="username">Username</label>
+          <input id="username" type="text" autocomplete="off" placeholder="your.username" />
 
-          <button id="login-btn" class="btn-primary">Sign in</button>
+          <label for="password">Password</label>
+          <input id="password" type="password" autocomplete="off" placeholder="password (any)" />
 
-          <div id="message" aria-live="polite"></div>
+          <button id="login-btn" class="btn" style="margin-top:12px;width:100%;">Sign in</button>
 
-          <div class="small" style="margin-top:10px;color:var(--muted)">
-            <strong>Test credentials:</strong> <span class="muted-inline">asdf / asdf</span>
+          <div id="msg" aria-live="polite"></div>
+
+          <div style="margin-top:12px;font-size:13px;color:var(--muted)">This demo stores session in <code>localStorage</code> only and does not contact any server.</div>
+        </div>
+
+        <!-- profile shown when signed in -->
+        <div id="profile-view" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:800">Your profile</div>
+            <div style="font-size:13px;color:var(--muted)">Member</div>
+          </div>
+
+          <!-- IMPORTANT: welcomeName receives innerHTML directly (intentional vulnerability). -->
+          <div style="margin-top:12px;font-size:15px">Hello, <span id="welcomeName"></span></div>
+          <div class="muted-note">Email: <span id="fakeEmail" class="muted-inline">(demo-no-email)</span></div>
+
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <button id="btn-orders" class="btn btn-ghost">Orders</button>
+            <button id="btn-logout" class="btn">Sign out</button>
           </div>
         </div>
       </div>
 
-      <!-- Dashboard placeholder (hidden initially) -->
-      <div id="dashboard" style="display:none">
-        <div class="dashboard">
-          <nav class="top-actions">
-            <div id="welcome-inline" class="muted-inline">Welcome</div>
-            <button id="logout" class="btn">Log out</button>
-          </nav>
-
-          <h3 style="margin-top:12px">Your Cart</h3>
-          <div style="margin-top:12px">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div>
-                <div style="font-weight:700">Ultra Backpack</div>
-                <div class="small muted-inline">Qty 1</div>
-              </div>
-              <div class="price">$49</div>
-            </div>
-          </div>
-
-          <div style="margin-top:16px">
-            <button class="btn-primary" id="checkout">Checkout</button>
-            <div class="small" style="margin-top:8px">Secure payment simulation (no real payments in this demo).</div>
-          </div>
+      <!-- quick cart preview -->
+      <div style="height:14px"></div>
+      <div class="panel" style="margin-top:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-weight:700">Quick cart</div>
+          <div class="muted-inline">Ready to checkout</div>
+        </div>
+        <div id="cart-list" style="margin-top:12px">No items yet.</div>
+        <div style="margin-top:12px">
+          <button id="checkout" class="btn" style="width:100%">Checkout (demo)</button>
         </div>
       </div>
 
@@ -161,79 +151,178 @@
   </section>
 
   <footer>
-    © <span id="year"></span> Mercan • Built for demo & testing
+    © <span id="year"></span> Mercan • Demo environment — do not deploy publicly
   </footer>
 </main>
 
 <script>
-  // -- Configuration: single allowed credential
-  const VALID_USER = "asdf";
-  const VALID_PASS = "asdf";
+  // ========== Product data (static) ==========
+  const PRODUCTS = [
+    {id:1,name:'Ultra Backpack',desc:'14L • water-resistant, padded laptop sleeve',price:49},
+    {id:2,name:'Everyday Watch',desc:'Minimal design • 3 ATM',price:79},
+    {id:3,name:'Commuter Mug',desc:'Stainless, insulated • 12oz',price:19},
+    {id:4,name:'Knit Throw',desc:'Soft acrylic • 50x60 in',price:39},
+    {id:5,name:'Desk Lamp',desc:'Adjustable arm • warm LED',price:59},
+    {id:6,name:'Travel Pouch',desc:'Cord organizer • multiple pockets',price:14}
+  ];
 
-  document.getElementById('year').textContent = new Date().getFullYear();
+  // ========== Basic app state ==========
+  const state = {
+    user: null, // {username}
+    cart: [] // array of product ids
+  };
+
+  // DOM refs
+  const productsEl = document.getElementById('products');
+  const countEl = document.getElementById('count');
+  const cartList = document.getElementById('cart-list');
 
   const loginBtn = document.getElementById('login-btn');
-  const userInput = document.getElementById('user');
-  const passInput = document.getElementById('pass');
-  const messageBox = document.getElementById('message');
-  const dashboard = document.getElementById('dashboard');
-  const loginCard = document.getElementById('login-card');
-  const authArea = document.getElementById('auth-area');
-  const welcomeInline = document.getElementById('welcome-inline');
+  const usernameInput = document.getElementById('username');
+  const passwordInput = document.getElementById('password');
+  const msg = document.getElementById('msg');
+  const panelArea = document.getElementById('panel-area');
 
-  // Open login from header
-  document.getElementById('open-login').addEventListener('click', ()=> {
-    window.scrollTo({top:0,behavior:'smooth'});
-    userInput.focus();
-  });
+  const loginView = document.getElementById('login-view');
+  const profileView = document.getElementById('profile-view');
+  const welcomeName = document.getElementById('welcomeName');
+  const fakeEmail = document.getElementById('fakeEmail');
 
-  // Logout
-  document.getElementById('logout').addEventListener('click', ()=> {
-    authArea.style.display = '';
-    dashboard.style.display = 'none';
-    messageBox.innerHTML = '';
-    userInput.value = '';
-    passInput.value = '';
-  });
+  const btnLogout = document.getElementById('btn-logout');
+  const btnOrders = document.getElementById('btn-orders');
 
-  // Simple client-side "auth" check
-  loginBtn.addEventListener('click', ()=> {
-    const u = userInput.value || '';
-    const p = passInput.value || '';
+  // ========== Utilities ==========
+  function $(sel){return document.querySelector(sel)}
+  function saveState(){
+    localStorage.setItem('merc_demo', JSON.stringify({user:state.user,cart:state.cart}));
+  }
+  function loadState(){
+    try{
+      const s = JSON.parse(localStorage.getItem('merc_demo'));
+      if(s){ state.user = s.user || null; state.cart = s.cart || []; }
+    }catch(e){ /* ignore */ }
+  }
 
-    if (u === VALID_USER && p === VALID_PASS) {
-      // successful login
-      authArea.style.display = 'none';
-      dashboard.style.display = '';
-      // IMPORTANT: This deliberately uses innerHTML to display the user name without sanitization,
-      // which is the intentional vulnerability (reflected XSS) for this demo.
-      welcomeInline.innerHTML = 'Welcome, ' + u;
-      messageBox.innerHTML = '<div class="success">Signed in successfully.</div>';
+  // ========== Render ==========
+  function renderProducts(list){
+    productsEl.innerHTML = '';
+    list.forEach(p=>{
+      const card = document.createElement('article'); card.className='card';
+      card.innerHTML = `
+        <div class="product-img">${p.name}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-weight:700">${p.name}</div>
+            <div class="muted-inline">${p.desc}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="price">$${p.price}</div>
+            <button data-id="${p.id}" class="btn" style="margin-top:8px">Add</button>
+          </div>
+        </div>
+      `;
+      productsEl.appendChild(card);
+    });
+  }
+
+  function renderCart(){
+    if(state.cart.length===0){ cartList.innerHTML='No items yet.'; countEl.textContent='0'; return; }
+    const lines = state.cart.map(id=>{
+      const p = PRODUCTS.find(x=>x.id===id);
+      return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div style=\"font-weight:700\">${p.name}</div><div class=\"muted-inline\">Qty 1</div></div><div class=\"price\">$${p.price}</div></div>`
+    });
+    cartList.innerHTML = lines.join('');
+    countEl.textContent = String(state.cart.length);
+  }
+
+  function setSignedIn(user){
+    state.user = {username: user};
+    saveState();
+    updateUIForAuth();
+  }
+
+  function signOut(){
+    state.user = null; state.cart = []; localStorage.removeItem('merc_demo'); updateUIForAuth(); renderCart();
+  }
+
+  function updateUIForAuth(){
+    if(state.user){
+      loginView.style.display='none';
+      profileView.style.display='block';
+      // IMPORTANT: intentionally vulnerable: using innerHTML with unescaped username
+      // so testers can try XSS payloads in the username on this demo page.
+      welcomeName.innerHTML = state.user.username;
+      fakeEmail.textContent = state.user.username.replace(/\s+/g,'.') + '@example.local';
+      msg.innerHTML = '<div class="success">Signed in as '+ escapeHtml(state.user.username) +'</div>';
     } else {
-      // failed login: show an error that echoes the username **without sanitizing**.
-      // This reflection makes the login page vulnerable to reflected XSS if an attacker
-      // submits malicious HTML/JS in the username field.
-      //
-      // Vulnerable line (intentional):
-      messageBox.innerHTML = '<div class="err">Login failed for \'' + u + '\'. Check credentials.</div>';
-      // Note: using innerText or proper encoding would prevent XSS; here we intentionally do not.
+      loginView.style.display='block';
+      profileView.style.display='none';
+      msg.innerHTML = '';
+      usernameInput.value=''; passwordInput.value='';
+    }
+  }
+
+  // escapeHtml used only for non-vulnerable text in messages; not used for welcomeName deliberately.
+  function escapeHtml(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  // ========== Events ==========
+  document.addEventListener('click', (e)=>{
+    if(e.target && e.target.getAttribute && e.target.getAttribute('data-id')){
+      const id = Number(e.target.getAttribute('data-id'));
+      state.cart.push(id);
+      saveState();
+      renderCart();
+      e.target.textContent = 'Added';
+      setTimeout(()=>{ e.target.textContent = 'Add'; },900);
     }
   });
 
-  // Allow pressing Enter
-  [userInput, passInput].forEach(inp=>{
-    inp.addEventListener('keyup', (e)=>{
-      if (e.key === 'Enter') loginBtn.click();
-    });
+  document.getElementById('do-search').addEventListener('click', ()=>{
+    const q = document.getElementById('search').value.trim().toLowerCase();
+    if(!q){ renderProducts(PRODUCTS); return; }
+    const filtered = PRODUCTS.filter(p=> (p.name+ ' ' + p.desc).toLowerCase().includes(q));
+    renderProducts(filtered);
   });
 
-  // Some small UI touches to avoid "example" feeling
-  (function seedProducts(){
-    // nothing fancy — products are static, this keeps file single-file and backendless.
-  })();
+  // Login: per user request, ANY username should authenticate. Password is not validated.
+  loginBtn.addEventListener('click', ()=>{
+    const u = usernameInput.value || '';
+    const p = passwordInput.value || '';
+    if(!u){ msg.innerHTML = '<div class="err">Please enter a username.</div>'; return; }
 
-  // Accessibility / info: do not run this on public servers
-  console.log("Demo site loaded. This page intentionally reflects unsanitized user input in the login error message for demonstration purposes only.");
+    // Accept any username — set session and show profile.
+    setSignedIn(u);
+  });
+
+  btnLogout.addEventListener('click', ()=>{ signOut(); });
+  document.getElementById('btn-profile').addEventListener('click', ()=>{ window.scrollTo({top:0,behavior:'smooth'}); usernameInput.focus(); });
+  document.getElementById('btn-cart').addEventListener('click', ()=>{ window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}); });
+
+  document.getElementById('checkout').addEventListener('click', ()=>{
+    if(!state.user){ msg.innerHTML = '<div class="err">Sign in before checkout.</div>'; return; }
+    alert('This is a demo checkout. No payment is processed.');
+  });
+
+  btnOrders.addEventListener('click', ()=>{ alert('No real orders in demo — try adding items to cart and checkout.'); });
+
+  // ========== Init ==========
+  function init(){
+    loadState();
+    renderProducts(PRODUCTS);
+    renderCart();
+    updateUIForAuth();
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Allow Enter key to login
+    [usernameInput,passwordInput].forEach(el=>el.addEventListener('keyup',(e)=>{ if(e.key==='Enter') loginBtn.click(); }));
+  }
+
+  init();
+
+  // Helpful console message
+  console.log('Mercan demo v2 loaded. This page intentionally reflects the raw username into the profile welcome (innerHTML) to demonstrate reflected XSS in a safe, local environment. Do not deploy publicly.');
 </script>
 </body>
 </html>
