@@ -1,1 +1,492 @@
-<button onclick="document.write("Hello World")">Hello</button>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>GlassDash — Sexy Glassmorphism Dashboard</title>
+<style>
+  /* =========================
+     Root / Design Tokens
+     ========================= */
+  :root{
+    --bg-1: 9 10 13;         /* rgb channels for flexible alpha usage */
+    --bg-2: 24 25 31;
+    --glass-a: 0.12;
+    --accent: 164 125 255;   /* purple-ish accent */
+    --muted: 200 200 210;
+    --card-radius: 16px;
+    --glass-blur: 14px;
+    --glass-border: 1px;
+    --shadow: 0 10px 30px rgba(2,6,23,0.45);
+    --glass-gradient: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+
+  /* Dark theme variant (applies by toggling .theme-light on body) */
+  .theme-light{
+    --bg-1: 246 247 250;
+    --bg-2: 230 231 235;
+    --glass-a: 0.55;
+    --accent: 66 133 244; /* bluish */
+    --muted: 90 95 110;
+    --shadow: 0 8px 22px rgba(20,24,30,0.08);
+    --glass-gradient: linear-gradient(135deg, rgba(255,255,255,0.7), rgba(255,255,255,0.85));
+  }
+
+  /* =========================
+     Page layout + base
+     ========================= */
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:var(--font-sans);
+    color:rgba(var(--muted),1);
+    background:
+      radial-gradient(1200px 600px at 10% 10%, rgba(var(--accent),0.12), transparent 8%),
+      radial-gradient(900px 420px at 90% 90%, rgba(120,200,255,0.04), transparent 8%),
+      linear-gradient(180deg, rgba(var(--bg-1),1), rgba(var(--bg-2),1));
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding:28px;
+    transition:background .45s ease, color .25s ease;
+  }
+
+  .container{
+    max-width:1200px;
+    margin:0 auto;
+  }
+
+  header.topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:22px;
+  }
+
+  .brand{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  .logo{
+    width:54px;height:54px;border-radius:12px;
+    background:linear-gradient(135deg, rgba(var(--accent),0.95), rgba(255,255,255,0.06));
+    display:grid;place-items:center;
+    font-weight:700;color:white;font-size:20px;
+    box-shadow: var(--shadow);
+    transform:translateZ(0);
+  }
+  .brand h1{ margin:0;font-size:18px;letter-spacing:-0.2px; color: rgba(var(--muted),1) }
+  .brand p{ margin:0;font-size:12px;color: rgba(var(--muted),0.65) }
+
+  .controls{ display:flex; gap:10px; align-items:center; }
+
+  .btn{
+    border:0;padding:8px 12px;border-radius:10px;background:transparent;color:inherit;
+    cursor:pointer;font-weight:600;font-size:13px;
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+  .btn.ghost{ padding:8px;border-radius:10px; }
+
+  /* Grid */
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr 340px;
+    gap:18px;
+  }
+
+  /* Left column: cards and main */
+  .left{
+    display:grid;
+    gap:18px;
+  }
+
+  /* Cards row */
+  .cards{
+    display:grid;
+    grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+    gap:14px;
+  }
+
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:var(--card-radius);
+    padding:16px;
+    min-height:88px;
+    box-shadow: var(--shadow);
+    position:relative;
+    border: var(--glass-border) solid rgba(255,255,255, calc(var(--glass-a) * 0.7));
+    backdrop-filter: blur(var(--glass-blur));
+    transition: transform .28s cubic-bezier(.2,.9,.2,1), box-shadow .28s;
+    overflow:hidden;
+  }
+  .card:hover{ transform: translateY(-6px) scale(1.01); }
+
+  .card .title{ font-size:12px; color: rgba(var(--muted),0.85); margin-bottom:8px; }
+  .card .value{ font-size:20px; font-weight:700; color: white; }
+
+  .sparkline{ width:100%; height:36px; display:block; margin-top:8px; }
+
+  /* Right column */
+  .right{ display:flex; flex-direction:column; gap:18px; }
+
+  /* Activity panel */
+  .panel{
+    border-radius:14px; padding:16px; min-height:120px;
+    border: var(--glass-border) solid rgba(255,255,255, calc(var(--glass-a) * 0.7));
+    background: var(--glass-gradient);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(var(--glass-blur));
+  }
+  .panel h3{ margin:0 0 8px 0; font-size:14px; color:rgba(var(--muted),1) }
+
+  /* draggable list */
+  .draggable-list{ display:grid; gap:10px; }
+  .draggable-item{
+    padding:12px;border-radius:12px;background:transparent;border:1px solid rgba(255,255,255,0.03);
+    cursor:grab; display:flex; align-items:center; justify-content:space-between;
+  }
+  .draggable-item:active{ cursor:grabbing; }
+
+  /* footer small */
+  .small{font-size:12px;color:rgba(var(--muted),0.7)}
+
+  /* responsive */
+  @media (max-width:920px){
+    .grid{ grid-template-columns: 1fr; }
+  }
+
+  /* accent gradient bar */
+  .accent-bar{
+    height:4px;border-radius:999px;margin-top:8px;background:linear-gradient(90deg, rgba(var(--accent),1), rgba(255,140,145,0.9));
+    box-shadow: 0 6px 18px rgba(var(--accent),0.12);
+  }
+
+  /* nice toggle */
+  .switch{
+    width:48px;height:28px;border-radius:999px;background:rgba(255,255,255,0.06);display:inline-flex;padding:4px;align-items:center;
+  }
+  .switch .knob{ width:20px;height:20px;border-radius:50%;background:white;transition:transform .18s; transform: translateX(0); }
+  body.theme-light .switch{ background: rgba(2,6,23,0.06) }
+  body.theme-light .switch .knob{ transform: translateX(20px); background:rgb(var(--accent)); }
+
+  /* subtle helper */
+  .muted{ color: rgba(var(--muted),0.65); font-size:13px; }
+
+  /* tiny animation for numbers */
+  .pop-in{ animation: pop .6s both; }
+  @keyframes pop{ from{ transform:translateY(6px); opacity:0 } to{ transform:none; opacity:1 } }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">GD</div>
+        <div>
+          <h1>GlassDash</h1>
+          <p class="muted">A polished glassmorphism dashboard (frontend-only)</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="small muted" id="clock">--:--:--</div>
+        <button class="btn ghost" id="exportCss">Export CSS</button>
+        <button class="btn" id="toggleTheme" title="Toggle theme">
+          <span class="switch" aria-hidden><span class="knob"></span></span>
+        </button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="left">
+        <div class="cards" id="cardsRow">
+          <div class="card" data-id="visitors">
+            <div class="title">Visitors</div>
+            <div class="value" id="val-visitors">--</div>
+            <canvas class="sparkline" id="spark-visitors"></canvas>
+          </div>
+
+          <div class="card" data-id="revenue">
+            <div class="title">Revenue</div>
+            <div class="value" id="val-revenue">$--</div>
+            <canvas class="sparkline" id="spark-revenue"></canvas>
+          </div>
+
+          <div class="card" data-id="conversions">
+            <div class="title">Conversion</div>
+            <div class="value" id="val-conversions">--%</div>
+            <canvas class="sparkline" id="spark-conv"></canvas>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Overview</h3>
+          <div class="muted small">Quick snapshot of metrics. Reorder cards on the left by dragging them — layout is saved locally.</div>
+          <div class="accent-bar" style="width:48%"></div>
+        </div>
+
+        <div class="panel">
+          <h3>Live Activity</h3>
+          <div style="display:flex;gap:12px;align-items:center;margin-top:12px">
+            <div style="flex:1">
+              <div class="muted small">Active users right now</div>
+              <div style="font-weight:800;font-size:18px" id="liveUsers">--</div>
+            </div>
+            <div style="width:120px">
+              <button class="btn" id="simulate">Simulate Spike</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="right">
+        <div class="panel">
+          <h3>Layout</h3>
+          <div class="muted small" style="margin-bottom:8px">Drag the cards left to reorder. Your order will be remembered.</div>
+          <div class="draggable-list" id="layoutList">
+            <!-- JS will populate -->
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>About</h3>
+          <p class="small muted">Built with pure HTML/CSS/JS. No backend, no frameworks. Focus on visuals, micro-interactions and UX polish.</p>
+          <div style="margin-top:10px" class="small muted">Made for demonstration & resume projects.</div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+<script>
+/* =========================
+   Small utility functions
+   ========================= */
+const $ = sel => document.querySelector(sel);
+const $all = sel => Array.from(document.querySelectorAll(sel));
+const rand = (min,max) => Math.floor(Math.random()*(max-min+1))+min;
+
+/* =========================
+   Theme handling (persisted)
+   ========================= */
+const body = document.body;
+const savedTheme = localStorage.getItem('gd:theme');
+if (savedTheme === 'light') body.classList.add('theme-light');
+
+$('#toggleTheme').addEventListener('click', () => {
+  body.classList.toggle('theme-light');
+  localStorage.setItem('gd:theme', body.classList.contains('theme-light') ? 'light' : 'dark');
+});
+
+/* =========================
+   Clock
+   ========================= */
+function tickClock(){
+  const el = $('#clock');
+  const d = new Date();
+  el.textContent = d.toLocaleTimeString();
+}
+tickClock();
+setInterval(tickClock, 1000);
+
+/* =========================
+   Fake metrics + sparkline
+   ========================= */
+function makeSpark(canvas, data, color){
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,w,h);
+
+  // draw path
+  ctx.beginPath();
+  const spacing = w / (data.length - 1);
+  data.forEach((v,i)=>{
+    const x = i*spacing;
+    const y = h - ( (v - Math.min(...data)) / (Math.max(...data)-Math.min(...data) || 1) ) * h;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle = `rgba(${color},0.95)`;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // area fill
+  ctx.lineTo(w, h);
+  ctx.lineTo(0, h);
+  ctx.closePath();
+  const g = ctx.createLinearGradient(0,0,0,h);
+  g.addColorStop(0, `rgba(${color},0.16)`);
+  g.addColorStop(1, `rgba(${color},0.03)`);
+  ctx.fillStyle = g;
+  ctx.fill();
+}
+
+/* initialize some sample data */
+const metrics = {
+  visitors: Array.from({length:20}, ()=>rand(60,240)),
+  revenue: Array.from({length:20}, ()=>rand(120,920)),
+  conversions: Array.from({length:20}, ()=>rand(2,12))
+};
+
+function updateUI(){
+  $('#val-visitors').textContent = metrics.visitors[metrics.visitors.length-1];
+  $('#val-revenue').textContent = '$' + metrics.revenue[metrics.revenue.length-1];
+  $('#val-conversions').textContent = metrics.conversions[metrics.conversions.length-1] + '%';
+  $('#liveUsers').textContent = rand(8, 180);
+
+  makeSpark($('#spark-visitors'), metrics.visitors, '255,255,255');
+  makeSpark($('#spark-revenue'), metrics.revenue, '255,230,150');
+  makeSpark($('#spark-conv'), metrics.conversions, '164,125,255');
+
+  // animate numeric pop
+  $all('.value').forEach(el => {
+    el.classList.remove('pop-in');
+    void el.offsetWidth;
+    el.classList.add('pop-in');
+  });
+}
+updateUI();
+
+/* simulate real-time updates */
+setInterval(()=>{
+  // shift arrays and push small changes
+  metrics.visitors.shift(); metrics.visitors.push(metrics.visitors[metrics.visitors.length-1] + rand(-20,40));
+  metrics.revenue.shift(); metrics.revenue.push(Math.max(0,metrics.revenue[metrics.revenue.length-1] + rand(-120,220)));
+  metrics.conversions.shift(); metrics.conversions.push(Math.max(0,metrics.conversions[metrics.conversions.length-1] + rand(-2,3)));
+  updateUI();
+}, 3500);
+
+/* simulate spike button */
+$('#simulate').addEventListener('click', ()=>{
+  for(let i=0;i<5;i++){
+    metrics.visitors.push(metrics.visitors[metrics.visitors.length-1] + rand(30,120));
+    metrics.visitors.shift();
+  }
+  updateUI();
+});
+
+/* =========================
+   Draggable cards (reorder and save)
+   ========================= */
+const cardsRow = $('#cardsRow');
+const layoutList = $('#layoutList');
+
+const defaultOrder = ['visitors','revenue','conversions'];
+let order = JSON.parse(localStorage.getItem('gd:order') || 'null') || defaultOrder.slice();
+
+// render cards according to order
+function renderCards(){
+  // clear
+  cardsRow.innerHTML = '';
+  order.forEach(id => {
+    const source = document.querySelector(`.card[data-id="${id}"]`);
+    if(source){
+      cardsRow.appendChild(source);
+    }
+  });
+}
+renderCards();
+
+// build layout list for reordering via drag
+function renderLayoutList(){
+  layoutList.innerHTML = '';
+  order.forEach(id=>{
+    const card = document.createElement('div');
+    card.className = 'draggable-item';
+    card.draggable = true;
+    card.dataset.id = id;
+    card.innerHTML = `<div style="display:flex;gap:10px;align-items:center"><strong style="width:10px;height:10px;border-radius:3px;background:linear-gradient(90deg, rgba(var(--accent),1), rgba(255,140,145,0.9))"></strong><div>${id[0].toUpperCase()+id.slice(1)}</div></div><div class="muted small">☰</div>`;
+    layoutList.appendChild(card);
+  });
+}
+renderLayoutList();
+
+let dragSrc = null;
+layoutList.addEventListener('dragstart', (e)=>{
+  dragSrc = e.target;
+  e.dataTransfer.effectAllowed = 'move';
+});
+layoutList.addEventListener('dragover', (e)=>{
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const target = e.target.closest('.draggable-item');
+  if(!target || target === dragSrc) return;
+  // show visual reorder
+  const rect = target.getBoundingClientRect();
+  const next = (e.clientY - rect.top) > rect.height/2;
+  target.parentNode.insertBefore(dragSrc, next ? target.nextSibling : target);
+});
+layoutList.addEventListener('drop', (e)=>{
+  e.preventDefault();
+  // rebuild order from dom
+  order = Array.from(layoutList.children).map(c=>c.dataset.id);
+  localStorage.setItem('gd:order', JSON.stringify(order));
+  renderCards();
+});
+
+/* also allow clicking on list items to move them to top */
+layoutList.addEventListener('click', (e)=>{
+  const tile = e.target.closest('.draggable-item');
+  if(!tile) return;
+  const id = tile.dataset.id;
+  order = [id, ...order.filter(x=>x!==id)];
+  localStorage.setItem('gd:order', JSON.stringify(order));
+  renderLayoutList();
+  renderCards();
+});
+
+/* re-render list when order changes programmatically */
+function syncLayout(){
+  renderLayoutList();
+}
+syncLayout();
+
+/* =========================
+   Export CSS variables (copy to clipboard)
+   ========================= */
+$('#exportCss').addEventListener('click', async ()=>{
+  const vars = getComputedStyle(document.documentElement);
+  // pick a few tokens
+  const css = `:root{
+  --accent: ${getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()};
+  --card-radius: ${getComputedStyle(document.documentElement).getPropertyValue('--card-radius').trim()};
+  --glass-blur: ${getComputedStyle(document.documentElement).getPropertyValue('--glass-blur').trim()};
+  --glass-a: ${getComputedStyle(document.documentElement).getPropertyValue('--glass-a').trim()};
+}`;
+  try{
+    await navigator.clipboard.writeText(css);
+    alert('CSS variables copied to clipboard.');
+  }catch(err){
+    prompt('Copy this CSS manually:', css);
+  }
+});
+
+/* initial resize handler to redraw canvases */
+window.addEventListener('resize', ()=>updateUI());
+
+/* small accessibility: keyboard reordering */
+document.addEventListener('keydown', (e)=>{
+  if(e.altKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')){
+    // move first card left/right
+    const first = order[0];
+    if(!first) return;
+    if(e.key === 'ArrowRight') {
+      order.push(order.shift());
+    } else {
+      order.unshift(order.pop());
+    }
+    localStorage.setItem('gd:order', JSON.stringify(order));
+    renderLayoutList(); renderCards();
+  }
+});
+</script>
+</body>
+</html>
