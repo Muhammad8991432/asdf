@@ -1,492 +1,732 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>GlassDash — Sexy Glassmorphism Dashboard</title>
-<style>
-  /* =========================
-     Root / Design Tokens
-     ========================= */
-  :root{
-    --bg-1: 9 10 13;         /* rgb channels for flexible alpha usage */
-    --bg-2: 24 25 31;
-    --glass-a: 0.12;
-    --accent: 164 125 255;   /* purple-ish accent */
-    --muted: 200 200 210;
-    --card-radius: 16px;
-    --glass-blur: 14px;
-    --glass-border: 1px;
-    --shadow: 0 10px 30px rgba(2,6,23,0.45);
-    --glass-gradient: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
-    --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  }
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>MindMap — Final</title>
+    <style>
+      :root {
+        --bg: #0f1724;
+        --panel: #0b1220;
+        --muted: #9aa6bf;
+        --accent: #7c5cff;
+        --card: #0c1626;
+      }
 
-  /* Dark theme variant (applies by toggling .theme-light on body) */
-  .theme-light{
-    --bg-1: 246 247 250;
-    --bg-2: 230 231 235;
-    --glass-a: 0.55;
-    --accent: 66 133 244; /* bluish */
-    --muted: 90 95 110;
-    --shadow: 0 8px 22px rgba(20,24,30,0.08);
-    --glass-gradient: linear-gradient(135deg, rgba(255,255,255,0.7), rgba(255,255,255,0.85));
-  }
+      * {
+        box-sizing: border-box;
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+        color: #e6eef8;
+      }
 
-  /* =========================
-     Page layout + base
-     ========================= */
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;
-    min-height:100vh;
-    font-family:var(--font-sans);
-    color:rgba(var(--muted),1);
-    background:
-      radial-gradient(1200px 600px at 10% 10%, rgba(var(--accent),0.12), transparent 8%),
-      radial-gradient(900px 420px at 90% 90%, rgba(120,200,255,0.04), transparent 8%),
-      linear-gradient(180deg, rgba(var(--bg-1),1), rgba(var(--bg-2),1));
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    padding:28px;
-    transition:background .45s ease, color .25s ease;
-  }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        background: linear-gradient(180deg, var(--bg), #071021);
+      }
 
-  .container{
-    max-width:1200px;
-    margin:0 auto;
-  }
+      .topbar {
+        position: fixed;
+        top: 10px;
+        left: 12px;
+        right: 12px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(6px);
+        z-index: 60;
+      }
 
-  header.topbar{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    margin-bottom:22px;
-  }
+      .brand {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
 
-  .brand{
-    display:flex;
-    gap:12px;
-    align-items:center;
-  }
-  .logo{
-    width:54px;height:54px;border-radius:12px;
-    background:linear-gradient(135deg, rgba(var(--accent),0.95), rgba(255,255,255,0.06));
-    display:grid;place-items:center;
-    font-weight:700;color:white;font-size:20px;
-    box-shadow: var(--shadow);
-    transform:translateZ(0);
-  }
-  .brand h1{ margin:0;font-size:18px;letter-spacing:-0.2px; color: rgba(var(--muted),1) }
-  .brand p{ margin:0;font-size:12px;color: rgba(var(--muted),0.65) }
+      .logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, var(--accent), #33c2ff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #041025;
+        font-weight: 700;
+      }
 
-  .controls{ display:flex; gap:10px; align-items:center; }
+      .title {
+        font-weight: 700;
+      }
 
-  .btn{
-    border:0;padding:8px 12px;border-radius:10px;background:transparent;color:inherit;
-    cursor:pointer;font-weight:600;font-size:13px;
-    backdrop-filter: blur(6px);
-    border: 1px solid rgba(255,255,255,0.03);
-  }
-  .btn.ghost{ padding:8px;border-radius:10px; }
+      .toolbar {
+        margin-left: auto;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
 
-  /* Grid */
-  .grid{
-    display:grid;
-    grid-template-columns: 1fr 340px;
-    gap:18px;
-  }
+      .btn {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        color: var(--muted);
+        padding: 8px 12px;
+        border-radius: 10px;
+        cursor: pointer;
+      }
 
-  /* Left column: cards and main */
-  .left{
-    display:grid;
-    gap:18px;
-  }
+      .btn.primary {
+        background: linear-gradient(90deg, var(--accent), #33c2ff);
+        color: #021026;
+        border: 0;
+      }
 
-  /* Cards row */
-  .cards{
-    display:grid;
-    grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
-    gap:14px;
-  }
+      .workspace {
+        position: absolute;
+        inset: 72px 12px 12px 12px;
+        border-radius: 12px;
+        overflow: hidden;
+      }
 
-  .card{
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius:var(--card-radius);
-    padding:16px;
-    min-height:88px;
-    box-shadow: var(--shadow);
-    position:relative;
-    border: var(--glass-border) solid rgba(255,255,255, calc(var(--glass-a) * 0.7));
-    backdrop-filter: blur(var(--glass-blur));
-    transition: transform .28s cubic-bezier(.2,.9,.2,1), box-shadow .28s;
-    overflow:hidden;
-  }
-  .card:hover{ transform: translateY(-6px) scale(1.01); }
+      #stage {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        touch-action: none;
+        outline: none;
+      }
 
-  .card .title{ font-size:12px; color: rgba(var(--muted),0.85); margin-bottom:8px; }
-  .card .value{ font-size:20px; font-weight:700; color: white; }
+      .grid {
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.02) 1px,
+            transparent 1px
+          ),
+          linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        background-size: 40px 40px;
+        opacity: 0.08;
+        pointer-events: none;
+      }
 
-  .sparkline{ width:100%; height:36px; display:block; margin-top:8px; }
+      svg.connectors {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: visible;
+        z-index: 1;
+      }
 
-  /* Right column */
-  .right{ display:flex; flex-direction:column; gap:18px; }
+      .node {
+        position: absolute;
+        min-width: 140px;
+        max-width: 360px;
+        padding: 10px 14px;
+        border-radius: 12px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.02),
+          rgba(255, 255, 255, 0.01)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: 0 12px 30px rgba(2, 6, 23, 0.6);
+        z-index: 5;
+        cursor: grab;
+        user-select: none;
+      }
 
-  /* Activity panel */
-  .panel{
-    border-radius:14px; padding:16px; min-height:120px;
-    border: var(--glass-border) solid rgba(255,255,255, calc(var(--glass-a) * 0.7));
-    background: var(--glass-gradient);
-    box-shadow: var(--shadow);
-    backdrop-filter: blur(var(--glass-blur));
-  }
-  .panel h3{ margin:0 0 8px 0; font-size:14px; color:rgba(var(--muted),1) }
+      .node:active {
+        cursor: grabbing;
+      }
 
-  /* draggable list */
-  .draggable-list{ display:grid; gap:10px; }
-  .draggable-item{
-    padding:12px;border-radius:12px;background:transparent;border:1px solid rgba(255,255,255,0.03);
-    cursor:grab; display:flex; align-items:center; justify-content:space-between;
-  }
-  .draggable-item:active{ cursor:grabbing; }
+      .node .title {
+        font-weight: 700;
+        font-size: 15px;
+        outline: none;
+      }
 
-  /* footer small */
-  .small{font-size:12px;color:rgba(var(--muted),0.7)}
+      .node .title[contenteditable="true"]:focus {
+        outline: 2px solid rgba(124, 92, 255, 0.14);
+        border-radius: 6px;
+        padding: 2px;
+      }
 
-  /* responsive */
-  @media (max-width:920px){
-    .grid{ grid-template-columns: 1fr; }
-  }
+      .node .meta {
+        margin-top: 6px;
+        font-size: 13px;
+        color: var(--muted);
+      }
 
-  /* accent gradient bar */
-  .accent-bar{
-    height:4px;border-radius:999px;margin-top:8px;background:linear-gradient(90deg, rgba(var(--accent),1), rgba(255,140,145,0.9));
-    box-shadow: 0 6px 18px rgba(var(--accent),0.12);
-  }
+      .info-btn {
+        position: absolute;
+        left: -26px;
+        top: 10px;
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        background: linear-gradient(135deg, var(--accent), #33c2ff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        color: #021026;
+        cursor: pointer;
+        z-index: 6;
+      }
 
-  /* nice toggle */
-  .switch{
-    width:48px;height:28px;border-radius:999px;background:rgba(255,255,255,0.06);display:inline-flex;padding:4px;align-items:center;
-  }
-  .switch .knob{ width:20px;height:20px;border-radius:50%;background:white;transition:transform .18s; transform: translateX(0); }
-  body.theme-light .switch{ background: rgba(2,6,23,0.06) }
-  body.theme-light .switch .knob{ transform: translateX(20px); background:rgb(var(--accent)); }
+      .info-panel {
+        display: none;
+        position: absolute;
+        left: 0;
+        top: 100%;
+        margin-top: 8px;
+        width: 260px;
+        background: #041225;
+        border-radius: 10px;
+        padding: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        z-index: 8;
+      }
 
-  /* subtle helper */
-  .muted{ color: rgba(var(--muted),0.65); font-size:13px; }
+      .info-panel textarea {
+        width: 100%;
+        height: 96px;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        color: #dce9ff;
+        padding: 8px;
+        border-radius: 8px;
+        font-size: 13px;
+      }
 
-  /* tiny animation for numbers */
-  .pop-in{ animation: pop .6s both; }
-  @keyframes pop{ from{ transform:translateY(6px); opacity:0 } to{ transform:none; opacity:1 } }
-</style>
-</head>
-<body>
-  <div class="container">
-    <header class="topbar">
+      .node.focused {
+        box-shadow: 0 20px 48px rgba(124, 92, 255, 0.18);
+        transform: translateZ(0);
+      }
+
+      .floating-menu {
+        position: fixed;
+        display: none;
+        z-index: 80;
+        background: #07152a;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        padding: 6px;
+        border-radius: 8px;
+      }
+
+      .floating-menu button {
+        display: block;
+        background: transparent;
+        border: 0;
+        color: var(--muted);
+        padding: 6px 8px;
+        text-align: left;
+        width: 160px;
+      }
+
+      .footer {
+        position: fixed;
+        left: 12px;
+        bottom: 12px;
+        background: rgba(255, 255, 255, 0.02);
+        padding: 8px 12px;
+        border-radius: 12px;
+        color: var(--muted);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        z-index: 60;
+      }
+
+      @media (max-width: 900px) {
+        .topbar {
+          height: 64px;
+        }
+
+        .info-panel {
+          width: 220px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="topbar" role="toolbar" aria-label="top toolbar">
       <div class="brand">
-        <div class="logo">GD</div>
+        <div class="logo">MM</div>
         <div>
-          <h1>GlassDash</h1>
-          <p class="muted">A polished glassmorphism dashboard (frontend-only)</p>
+          <div class="title">MindMap Final</div>
+          <div style="font-size:12px;color:var(--muted)">
+            mobile + desktop
+          </div>
         </div>
       </div>
 
-      <div class="controls">
-        <div class="small muted" id="clock">--:--:--</div>
-        <button class="btn ghost" id="exportCss">Export CSS</button>
-        <button class="btn" id="toggleTheme" title="Toggle theme">
-          <span class="switch" aria-hidden><span class="knob"></span></span>
-        </button>
+      <div class="toolbar">
+        <button id="btnAdd" class="btn primary">+ Add Box</button>
+        <button id="btnConnect" class="btn">Connect Mode</button>
+        <button id="btnChild" class="btn">Add Child</button>
+        <button id="btnExport" class="btn">Export HTML</button>
+        <button id="btnFit" class="btn">Fit</button>
       </div>
-    </header>
+    </div>
 
-    <main class="grid">
-      <section class="left">
-        <div class="cards" id="cardsRow">
-          <div class="card" data-id="visitors">
-            <div class="title">Visitors</div>
-            <div class="value" id="val-visitors">--</div>
-            <canvas class="sparkline" id="spark-visitors"></canvas>
-          </div>
+    <div class="workspace">
+      <div id="stage" tabindex="0">
+        <div class="grid"></div>
+        <svg id="svg" class="connectors" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+    </div>
 
-          <div class="card" data-id="revenue">
-            <div class="title">Revenue</div>
-            <div class="value" id="val-revenue">$--</div>
-            <canvas class="sparkline" id="spark-revenue"></canvas>
-          </div>
+    <div id="menu" class="floating-menu" aria-hidden="true">
+      <button data-action="add-child">Add Child</button>
+      <button data-action="change-color">Change Color</button>
+      <button data-action="delete">Delete</button>
+    </div>
 
-          <div class="card" data-id="conversions">
-            <div class="title">Conversion</div>
-            <div class="value" id="val-conversions">--%</div>
-            <canvas class="sparkline" id="spark-conv"></canvas>
-          </div>
-        </div>
+    <div class="footer">
+      Shortcuts: Shift+Click to connect • Double-tap/Double-click empty to add •
+      Hold node for menu
+    </div>
 
-        <div class="panel">
-          <h3>Overview</h3>
-          <div class="muted small">Quick snapshot of metrics. Reorder cards on the left by dragging them — layout is saved locally.</div>
-          <div class="accent-bar" style="width:48%"></div>
-        </div>
+    <script>
+      /* --------------- MAIN LOGIC --------------- */
+      (() => {
+        // --- state ---
+        const state = {
+          nodes: {},
+          rootId: null,
+          selected: null,
+          connectMode: false,
+          zoom: 1,
+          panX: 0,
+          panY: 0,
+          menuTarget: null
+        };
 
-        <div class="panel">
-          <h3>Live Activity</h3>
-          <div style="display:flex;gap:12px;align-items:center;margin-top:12px">
-            <div style="flex:1">
-              <div class="muted small">Active users right now</div>
-              <div style="font-weight:800;font-size:18px" id="liveUsers">--</div>
-            </div>
-            <div style="width:120px">
-              <button class="btn" id="simulate">Simulate Spike</button>
-            </div>
-          </div>
-        </div>
-      </section>
+        // --- DOM refs ---
+        const stage = document.getElementById("stage");
+        const svg = document.getElementById("svg");
+        const btnAdd = document.getElementById("btnAdd");
+        const btnConnect = document.getElementById("btnConnect");
+        const btnChild = document.getElementById("btnChild");
+        const btnExport = document.getElementById("btnExport");
+        const btnFit = document.getElementById("btnFit");
+        const menu = document.getElementById("menu");
 
-      <aside class="right">
-        <div class="panel">
-          <h3>Layout</h3>
-          <div class="muted small" style="margin-bottom:8px">Drag the cards left to reorder. Your order will be remembered.</div>
-          <div class="draggable-list" id="layoutList">
-            <!-- JS will populate -->
-          </div>
-        </div>
+        const uid = (n = 8) => Math.random().toString(36).slice(2, 2 + n);
+        const now = () => Date.now();
 
-        <div class="panel">
-          <h3>About</h3>
-          <p class="small muted">Built with pure HTML/CSS/JS. No backend, no frameworks. Focus on visuals, micro-interactions and UX polish.</p>
-          <div style="margin-top:10px" class="small muted">Made for demonstration & resume projects.</div>
-        </div>
-      </aside>
-    </main>
-  </div>
+        /* ---------- Node Creation ---------- */
+        function createNodeModel({
+          text = "New Box",
+          x = 100,
+          y = 100,
+          color = "#7c5cff",
+          note = ""
+        } = {}) {
+          const id = uid();
+          state.nodes[id] = {
+            id,
+            text,
+            x,
+            y,
+            color,
+            note,
+            children: [],
+            parents: [],
+            created: now()
+          };
+          return state.nodes[id];
+        }
 
-<script>
-/* =========================
-   Small utility functions
-   ========================= */
-const $ = sel => document.querySelector(sel);
-const $all = sel => Array.from(document.querySelectorAll(sel));
-const rand = (min,max) => Math.floor(Math.random()*(max-min+1))+min;
+        /* ---------- Create Node Element ---------- */
+        function createNodeEl(node) {
+          const el = document.createElement("div");
+          el.className = "node";
+          el.dataset.id = node.id;
+          el.style.left = node.x + "px";
+          el.style.top = node.y + "px";
+          el.style.borderLeft = `6px solid ${node.color}`;
 
-/* =========================
-   Theme handling (persisted)
-   ========================= */
-const body = document.body;
-const savedTheme = localStorage.getItem('gd:theme');
-if (savedTheme === 'light') body.classList.add('theme-light');
+          // info button
+          const infoBtn = document.createElement("div");
+          infoBtn.className = "info-btn";
+          infoBtn.innerHTML = "i";
+          el.appendChild(infoBtn);
 
-$('#toggleTheme').addEventListener('click', () => {
-  body.classList.toggle('theme-light');
-  localStorage.setItem('gd:theme', body.classList.contains('theme-light') ? 'light' : 'dark');
-});
+          // title
+          const title = document.createElement("div");
+          title.className = "title";
+          title.contentEditable = true;
+          title.spellcheck = false;
+          title.innerText = node.text;
+          el.appendChild(title);
 
-/* =========================
-   Clock
-   ========================= */
-function tickClock(){
-  const el = $('#clock');
-  const d = new Date();
-  el.textContent = d.toLocaleTimeString();
-}
-tickClock();
-setInterval(tickClock, 1000);
+          // meta
+          const meta = document.createElement("div");
+          meta.className = "meta";
+          meta.innerHTML = `<small style="color:var(--muted)">id:${node.id}</small>`;
+          el.appendChild(meta);
 
-/* =========================
-   Fake metrics + sparkline
-   ========================= */
-function makeSpark(canvas, data, color){
-  const dpr = window.devicePixelRatio || 1;
-  const w = canvas.clientWidth;
-  const h = canvas.clientHeight;
-  canvas.width = w * dpr;
-  canvas.height = h * dpr;
-  const ctx = canvas.getContext('2d');
-  ctx.scale(dpr,dpr);
-  ctx.clearRect(0,0,w,h);
+          // info panel
+          const infoPanel = document.createElement("div");
+          infoPanel.className = "info-panel";
+          infoPanel.innerHTML = `<textarea placeholder="Additional info">${node.note ||
+            ""}</textarea>`;
+          el.appendChild(infoPanel);
 
-  // draw path
-  ctx.beginPath();
-  const spacing = w / (data.length - 1);
-  data.forEach((v,i)=>{
-    const x = i*spacing;
-    const y = h - ( (v - Math.min(...data)) / (Math.max(...data)-Math.min(...data) || 1) ) * h;
-    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-  });
-  ctx.strokeStyle = `rgba(${color},0.95)`;
-  ctx.lineWidth = 2;
-  ctx.stroke();
+          // title focus
+          title.addEventListener("focus", () => {
+            hideAllInfoPanels();
+            infoPanel.style.display = "block";
+            el.classList.add("focused");
+            selectNode(node.id);
+          });
 
-  // area fill
-  ctx.lineTo(w, h);
-  ctx.lineTo(0, h);
-  ctx.closePath();
-  const g = ctx.createLinearGradient(0,0,0,h);
-  g.addColorStop(0, `rgba(${color},0.16)`);
-  g.addColorStop(1, `rgba(${color},0.03)`);
-  ctx.fillStyle = g;
-  ctx.fill();
-}
+          title.addEventListener("blur", () => {
+            node.text = title.innerText;
+            setTimeout(() => {
+              if (
+                document.activeElement !== infoPanel.querySelector("textarea")
+              ) {
+                infoPanel.style.display = "none";
+                el.classList.remove("focused");
+              }
+            }, 120);
+          });
 
-/* initialize some sample data */
-const metrics = {
-  visitors: Array.from({length:20}, ()=>rand(60,240)),
-  revenue: Array.from({length:20}, ()=>rand(120,920)),
-  conversions: Array.from({length:20}, ()=>rand(2,12))
-};
+          title.addEventListener("input", () => (node.text = title.innerText));
 
-function updateUI(){
-  $('#val-visitors').textContent = metrics.visitors[metrics.visitors.length-1];
-  $('#val-revenue').textContent = '$' + metrics.revenue[metrics.revenue.length-1];
-  $('#val-conversions').textContent = metrics.conversions[metrics.conversions.length-1] + '%';
-  $('#liveUsers').textContent = rand(8, 180);
+          // info button click
+          infoBtn.addEventListener("click", e => {
+            e.stopPropagation();
+            const open = infoPanel.style.display === "block";
+            hideAllInfoPanels();
+            infoPanel.style.display = open ? "none" : "block";
+            if (!open) infoPanel.querySelector("textarea").focus();
+            selectNode(node.id);
+          });
 
-  makeSpark($('#spark-visitors'), metrics.visitors, '255,255,255');
-  makeSpark($('#spark-revenue'), metrics.revenue, '255,230,150');
-  makeSpark($('#spark-conv'), metrics.conversions, '164,125,255');
+          // textarea update
+          const ta = infoPanel.querySelector("textarea");
+          ta.addEventListener("input", () => (node.note = ta.value));
+          ta.addEventListener("blur", () => {
+            setTimeout(() => {
+              if (document.activeElement !== title) {
+                infoPanel.style.display = "none";
+                el.classList.remove("focused");
+              }
+            }, 120);
+          });
 
-  // animate numeric pop
-  $all('.value').forEach(el => {
-    el.classList.remove('pop-in');
-    void el.offsetWidth;
-    el.classList.add('pop-in');
-  });
-}
-updateUI();
+          // dragging
+          el.addEventListener("pointerdown", ev => {
+            ev.stopPropagation();
+            if (ev.button === 2) return;
+            startDrag(ev, el, node);
+          });
 
-/* simulate real-time updates */
-setInterval(()=>{
-  // shift arrays and push small changes
-  metrics.visitors.shift(); metrics.visitors.push(metrics.visitors[metrics.visitors.length-1] + rand(-20,40));
-  metrics.revenue.shift(); metrics.revenue.push(Math.max(0,metrics.revenue[metrics.revenue.length-1] + rand(-120,220)));
-  metrics.conversions.shift(); metrics.conversions.push(Math.max(0,metrics.conversions[metrics.conversions.length-1] + rand(-2,3)));
-  updateUI();
-}, 3500);
+          el.addEventListener("dblclick", ev => {
+            ev.stopPropagation();
+            title.focus();
+          });
 
-/* simulate spike button */
-$('#simulate').addEventListener('click', ()=>{
-  for(let i=0;i<5;i++){
-    metrics.visitors.push(metrics.visitors[metrics.visitors.length-1] + rand(30,120));
-    metrics.visitors.shift();
-  }
-  updateUI();
-});
+          el.addEventListener("contextmenu", ev => {
+            ev.preventDefault();
+            showNodeMenu(el, ev.clientX, ev.clientY);
+          });
 
-/* =========================
-   Draggable cards (reorder and save)
-   ========================= */
-const cardsRow = $('#cardsRow');
-const layoutList = $('#layoutList');
+          let longpress = null;
+          el.addEventListener("pointerdown", ev => {
+            longpress = setTimeout(
+              () => showNodeMenu(el, ev.clientX, ev.clientY),
+              600
+            );
+          });
+          el.addEventListener("pointerup", () => clearTimeout(longpress));
 
-const defaultOrder = ['visitors','revenue','conversions'];
-let order = JSON.parse(localStorage.getItem('gd:order') || 'null') || defaultOrder.slice();
+          // shift+click connect
+          el.addEventListener("click", ev => {
+            ev.stopPropagation();
+            if (ev.shiftKey || state.connectMode) {
+              if (!state._connectFrom) {
+                state._connectFrom = node.id;
+                el.classList.add("focused");
+              } else {
+                if (state._connectFrom !== node.id)
+                  connectNodes(state._connectFrom, node.id);
+                const prev = document.querySelector(
+                  `.node[data-id="${state._connectFrom}"]`
+                );
+                if (prev) prev.classList.remove("focused");
+                state._connectFrom = null;
+              }
+            } else {
+              selectNode(node.id);
+            }
+          });
 
-// render cards according to order
-function renderCards(){
-  // clear
-  cardsRow.innerHTML = '';
-  order.forEach(id => {
-    const source = document.querySelector(`.card[data-id="${id}"]`);
-    if(source){
-      cardsRow.appendChild(source);
-    }
-  });
-}
-renderCards();
+          return el;
+        }
 
-// build layout list for reordering via drag
-function renderLayoutList(){
-  layoutList.innerHTML = '';
-  order.forEach(id=>{
-    const card = document.createElement('div');
-    card.className = 'draggable-item';
-    card.draggable = true;
-    card.dataset.id = id;
-    card.innerHTML = `<div style="display:flex;gap:10px;align-items:center"><strong style="width:10px;height:10px;border-radius:3px;background:linear-gradient(90deg, rgba(var(--accent),1), rgba(255,140,145,0.9))"></strong><div>${id[0].toUpperCase()+id.slice(1)}</div></div><div class="muted small">☰</div>`;
-    layoutList.appendChild(card);
-  });
-}
-renderLayoutList();
+        /* ---------- Helper UI ---------- */
+        function hideAllInfoPanels() {
+          document
+            .querySelectorAll(".info-panel")
+            .forEach(p => (p.style.display = "none"));
+          document
+            .querySelectorAll(".node.focused")
+            .forEach(n => n.classList.remove("focused"));
+        }
 
-let dragSrc = null;
-layoutList.addEventListener('dragstart', (e)=>{
-  dragSrc = e.target;
-  e.dataTransfer.effectAllowed = 'move';
-});
-layoutList.addEventListener('dragover', (e)=>{
-  e.preventDefault();
-  e.dataTransfer.dropEffect = 'move';
-  const target = e.target.closest('.draggable-item');
-  if(!target || target === dragSrc) return;
-  // show visual reorder
-  const rect = target.getBoundingClientRect();
-  const next = (e.clientY - rect.top) > rect.height/2;
-  target.parentNode.insertBefore(dragSrc, next ? target.nextSibling : target);
-});
-layoutList.addEventListener('drop', (e)=>{
-  e.preventDefault();
-  // rebuild order from dom
-  order = Array.from(layoutList.children).map(c=>c.dataset.id);
-  localStorage.setItem('gd:order', JSON.stringify(order));
-  renderCards();
-});
+        function selectNode(id) {
+          state.selected = id;
+          document.querySelectorAll(".node").forEach(el =>
+            el.classList.toggle("selected", el.dataset.id === id)
+          );
+        }
 
-/* also allow clicking on list items to move them to top */
-layoutList.addEventListener('click', (e)=>{
-  const tile = e.target.closest('.draggable-item');
-  if(!tile) return;
-  const id = tile.dataset.id;
-  order = [id, ...order.filter(x=>x!==id)];
-  localStorage.setItem('gd:order', JSON.stringify(order));
-  renderLayoutList();
-  renderCards();
-});
+        /* ---------- Add node ---------- */
+        function addNode(node) {
+          const el = createNodeEl(node);
+          stage.appendChild(el);
+          setTimeout(drawConnectors, 0);
+        }
 
-/* re-render list when order changes programmatically */
-function syncLayout(){
-  renderLayoutList();
-}
-syncLayout();
+        /* ---------- Connection Drawing ---------- */
+        function connectNodes(fromId, toId) {
+          const from = state.nodes[fromId],
+            to = state.nodes[toId];
+          if (!from || !to) return;
+          if (!from.children.includes(toId)) from.children.push(toId);
+          if (!to.parents.includes(fromId)) to.parents.push(fromId);
+          drawConnectors();
+        }
 
-/* =========================
-   Export CSS variables (copy to clipboard)
-   ========================= */
-$('#exportCss').addEventListener('click', async ()=>{
-  const vars = getComputedStyle(document.documentElement);
-  // pick a few tokens
-  const css = `:root{
-  --accent: ${getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()};
-  --card-radius: ${getComputedStyle(document.documentElement).getPropertyValue('--card-radius').trim()};
-  --glass-blur: ${getComputedStyle(document.documentElement).getPropertyValue('--glass-blur').trim()};
-  --glass-a: ${getComputedStyle(document.documentElement).getPropertyValue('--glass-a').trim()};
-}`;
-  try{
-    await navigator.clipboard.writeText(css);
-    alert('CSS variables copied to clipboard.');
-  }catch(err){
-    prompt('Copy this CSS manually:', css);
-  }
-});
+        function drawConnectors() {
+          while (svg.firstChild) svg.removeChild(svg.firstChild);
+          Object.values(state.nodes).forEach(n => {
+            (n.children || []).forEach(cid => {
+              const c = state.nodes[cid];
+              if (!c) return;
+              const a = centerOf(n.id),
+                b = centerOf(c.id);
+              const p = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "path"
+              );
+              p.setAttribute("d", bezierPath(a, b));
+              p.setAttribute("stroke", n.color || "#7c5cff");
+              p.setAttribute("stroke-width", "3");
+              p.setAttribute("fill", "none");
+              p.setAttribute("stroke-linecap", "round");
+              svg.appendChild(p);
+            });
+          });
+        }
 
-/* initial resize handler to redraw canvases */
-window.addEventListener('resize', ()=>updateUI());
+        function centerOf(id) {
+          const el = document.querySelector(`.node[data-id="${id}"]`);
+          if (!el) return { x: 0, y: 0 };
+          return {
+            x: parseFloat(el.style.left) + el.offsetWidth / 2,
+            y: parseFloat(el.style.top) + el.offsetHeight / 2
+          };
+        }
 
-/* small accessibility: keyboard reordering */
-document.addEventListener('keydown', (e)=>{
-  if(e.altKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')){
-    // move first card left/right
-    const first = order[0];
-    if(!first) return;
-    if(e.key === 'ArrowRight') {
-      order.push(order.shift());
-    } else {
-      order.unshift(order.pop());
-    }
-    localStorage.setItem('gd:order', JSON.stringify(order));
-    renderLayoutList(); renderCards();
-  }
-});
-</script>
-</body>
+        function bezierPath(a, b) {
+          const dx = Math.abs(b.x - a.x);
+          const cx1 = a.x + Math.sign(b.x - a.x) * Math.max(40, dx * 0.25);
+          const cx2 = b.x - Math.sign(b.x - a.x) * Math.max(40, dx * 0.25);
+          return `M ${a.x} ${a.y} C ${cx1} ${a.y} ${cx2} ${b.y} ${b.x} ${b.y}`;
+        }
+
+        /* ---------- Pan & Zoom ---------- */
+        let dragging = null;
+        function startDrag(ev, el, model) {
+          ev.preventDefault();
+          dragging = {
+            el,
+            model,
+            sx: ev.clientX,
+            sy: ev.clientY,
+            ox: parseFloat(el.style.left),
+            oy: parseFloat(el.style.top)
+          };
+          document.addEventListener("pointermove", onMove);
+          document.addEventListener("pointerup", onUp);
+        }
+
+        function onMove(e) {
+          if (!dragging) return;
+          const dx = (e.clientX - dragging.sx) / state.zoom;
+          const dy = (e.clientY - dragging.sy) / state.zoom;
+          const nx = dragging.ox + dx;
+          const ny = dragging.oy + dy;
+          dragging.el.style.left = nx + "px";
+          dragging.el.style.top = ny + "px";
+          dragging.model.x = nx;
+          dragging.model.y = ny;
+          drawConnectors();
+        }
+
+        function onUp() {
+          dragging = null;
+          document.removeEventListener("pointermove", onMove);
+          document.removeEventListener("pointerup", onUp);
+        }
+
+        /* ---------- Context Menu ---------- */
+        function showNodeMenu(el, x, y) {
+          menu.style.display = "block";
+          menu.style.left = x + "px";
+          menu.style.top = y + "px";
+          menu.dataset.id = el.dataset.id;
+          state.menuTarget = el;
+        }
+
+        function hideMenu() {
+          menu.style.display = "none";
+          menu.dataset.id = "";
+          state.menuTarget = null;
+        }
+
+        menu.addEventListener("click", ev => {
+          const id = menu.dataset.id;
+          const action = ev.target.dataset.action;
+          if (!id || !action) return;
+          hideMenu();
+
+          if (action === "add-child") {
+            const parent = state.nodes[id];
+            const child = createNodeModel({
+              x: parent.x + 200,
+              y: parent.y + 80,
+              color: parent.color
+            });
+            parent.children.push(child.id);
+            child.parents.push(parent.id);
+            addNode(child);
+            drawConnectors();
+          } else if (action === "change-color") {
+            const newColor =
+              "#" +
+              Math.floor(Math.random() * 0xffffff)
+                .toString(16)
+                .padStart(6, "0");
+            const node = state.nodes[id];
+            node.color = newColor;
+            const el = document.querySelector(`.node[data-id="${id}"]`);
+            if (el) el.style.borderLeft = `6px solid ${newColor}`;
+            drawConnectors();
+          } else if (action === "delete") {
+            deleteNode(id);
+          }
+        });
+
+        stage.addEventListener("click", hideMenu);
+        document.addEventListener("scroll", hideMenu);
+
+        /* ---------- Delete Node ---------- */
+        function deleteNode(id) {
+          const node = state.nodes[id];
+          if (!node) return;
+          node.parents.forEach(pid => {
+            const p = state.nodes[pid];
+            if (p)
+              p.children = p.children.filter(cid => cid !== id);
+          });
+          node.children.forEach(cid => {
+            const c = state.nodes[cid];
+            if (c)
+              c.parents = c.parents.filter(pid => pid !== id);
+          });
+          const el = document.querySelector(`.node[data-id="${id}"]`);
+          if (el) el.remove();
+          delete state.nodes[id];
+          drawConnectors();
+        }
+
+        /* ---------- Export ---------- */
+        btnExport.addEventListener("click", () => {
+          const html = document.documentElement.outerHTML;
+          const blob = new Blob([html], { type: "text/html" });
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = "mindmap.html";
+          a.click();
+        });
+
+        /* ---------- Add / Connect / Fit ---------- */
+        btnAdd.addEventListener("click", () => {
+          const node = createNodeModel({
+            x: 200 + Math.random() * 200,
+            y: 200 + Math.random() * 200
+          });
+          addNode(node);
+        });
+
+        btnConnect.addEventListener("click", () => {
+          state.connectMode = !state.connectMode;
+          btnConnect.classList.toggle("primary", state.connectMode);
+          btnConnect.textContent = state.connectMode
+            ? "Connecting..."
+            : "Connect Mode";
+          state._connectFrom = null;
+        });
+
+        btnChild.addEventListener("click", () => {
+          if (!state.selected) return;
+          const parent = state.nodes[state.selected];
+          const child = createNodeModel({
+            x: parent.x + 200,
+            y: parent.y + 80,
+            color: parent.color
+          });
+          parent.children.push(child.id);
+          child.parents.push(parent.id);
+          addNode(child);
+          drawConnectors();
+        });
+
+        btnFit.addEventListener("click", () => {
+          const all = document.querySelectorAll(".node");
+          if (!all.length) return;
+          let minX = Infinity,
+            minY = Infinity,
+            maxX = -Infinity,
+            maxY = -Infinity;
+          all.forEach(el => {
+            const x = parseFloat(el.style.left),
+              y = parseFloat(el.style.top),
+              w = el.offsetWidth,
+              h = el.offsetHeight;
+            minX = Math.min(minX, x);
+            minY = Math.min(minY, y);
+            maxX = Math.max(maxX, x + w);
+            maxY = Math.max(maxY, y + h);
+          });
+          const cx = (minX + maxX) / 2;
+          const cy = (minY + maxY) / 2;
+          stage.scrollTo(cx - stage.clientWidth / 2, cy - stage.clientHeight / 2);
+        });
+
+        /* ---------- Init ---------- */
+        function init() {
+          const root = createNodeModel({ text: "Root", x: 400, y: 300 });
+          state.rootId = root.id;
+          addNode(root);
+        }
+
+        init();
+      })();
+    </script>
+  </body>
 </html>
